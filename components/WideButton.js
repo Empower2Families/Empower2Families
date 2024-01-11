@@ -29,8 +29,7 @@ const wideButtonStyles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 15,
-	fontWeight: 800,
-    fontFamily: 'Inter',
+	  fontWeight: 800,
   },
 });
 

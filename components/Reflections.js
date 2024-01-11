@@ -23,7 +23,6 @@ const reflectionsStyles = StyleSheet.create({
 	},
 	title:
 	{
-		fontFamily: 'Inter',
 		fontWeight: 900,
 		fontSize: 15,
 	},

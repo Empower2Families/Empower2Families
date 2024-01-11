@@ -39,7 +39,6 @@ const userStyles = StyleSheet.create({
 	},
 	userName:
 	{
-		fontFamily: 'Inter',
 		fontWeight: 900,
 		fontSize: 15
 	},

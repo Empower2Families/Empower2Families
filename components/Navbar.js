@@ -18,7 +18,6 @@ const navStyles = StyleSheet.create({
 	},
 	logo:
 	{
-	  fontFamily: 'Inter',
 	  fontSize: 24,
 	  fontStyle: 'italic',
 	  fontWeight: 800
