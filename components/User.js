@@ -5,6 +5,7 @@ import SmallButton from "./SmallButton";
 
 const User = () => {
 
+	// will create actual functionality later
 	const handleButtonPress = () => {
 		Alert.alert('Button Pressed');
 	  };

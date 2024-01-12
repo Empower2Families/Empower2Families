@@ -2,6 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Tile from "./Tile";
 
+// Component: Recent Achievements
+// Purpose: Maps out the 3 lastest achievements
 const RecentAchievements = () => {
 	return(
 		<View style={raStyles.raContainer}>

@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+// Component that contains the 'E2F' logo and Hamburger menu
 const Navbar = () => (
 	<View style={navStyles.navbarContainer}>
 		<Text style={navStyles.logo}>E2F</Text>

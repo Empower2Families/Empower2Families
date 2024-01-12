@@ -2,6 +2,8 @@ import React from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import SmallButton from "./SmallButton";
 
+// Component: Reflections
+// Purpose: Contains Small Buttons that will take the user to the page for each of the four reflections.
 const Reflections = () => {
   const screenWidth = Dimensions.get("window").width;
 
