@@ -20,7 +20,7 @@ const navStyles = StyleSheet.create({
 	{
 	  fontSize: 24,
 	  fontStyle: 'italic',
-	  fontWeight: 800
+	  fontWeight: 'bold'
 	}
   });
 

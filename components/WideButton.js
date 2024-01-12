@@ -17,7 +17,8 @@ const wideButtonStyles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 10,
 	justifyContent: 'flex-end',
-	height: 75,
+	height: 85,
+  elevation: 5,
 	shadowColor: "#000",
     shadowOffset: {
       width: 2,
@@ -29,7 +30,7 @@ const wideButtonStyles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 15,
-	  fontWeight: 800,
+	  fontWeight: 'bold',
   },
 });
 

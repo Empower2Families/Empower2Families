@@ -2,9 +2,9 @@ import React from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { COLORS } from '../constants';
 
-const SmallButton = ({ text, onPress }) => {
+const Tile = ({ text, onPress }) => {
   const containerWidth = Dimensions.get('window').width;
-  const buttonWidth = containerWidth / 2.8;
+  const buttonWidth = containerWidth / 4;
 
   return (
     <TouchableOpacity style={[smallButtonStyles.button, { width: buttonWidth }]}>
@@ -15,12 +15,12 @@ const SmallButton = ({ text, onPress }) => {
 
 const smallButtonStyles = StyleSheet.create({
   button: {
-    backgroundColor: COLORS.primaryColor,
+    backgroundColor: COLORS.lightModeBG,
     padding: 15,
     borderRadius: 5,
     marginVertical: 14,
     height: 85,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -31,10 +31,9 @@ const smallButtonStyles = StyleSheet.create({
     shadowRadius: 10,
   },
   buttonText: {
-    color: 'white',
     fontSize: 15,
     fontWeight: 'bold',
   },
 });
 
-export default SmallButton;
+export default Tile;
