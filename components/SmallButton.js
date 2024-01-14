@@ -7,7 +7,7 @@ const SmallButton = ({ text, onPress }) => {
   const buttonWidth = containerWidth / 2.8;
 
   return (
-    <TouchableOpacity style={[smallButtonStyles.button, { width: buttonWidth }]}>
+    <TouchableOpacity style={[smallButtonStyles.button, { width: buttonWidth }]} onPress={onPress}>
       <Text style={smallButtonStyles.buttonText}>{text}</Text>
     </TouchableOpacity>
   );

@@ -1,40 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import Copyright from './components/Copyright';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
-import RecentAchievements from './components/RecentAchievements';
-import Reflections from './components/Reflections';
-import User from './components/User';
-import WideButton from './components/WideButton';
-import { COLORS } from './constants';
+import app from './config/firebaseConfig';
+import Achievements from './pages/Achievements';
+import CreateAccountScreen from './pages/CreateAccountScreen';
+import Goals from './pages/Goals';
+import Home from './pages/Home';
+import LoginScreen from './pages/LoginScreen';
+import Stressors from './pages/Stressors';
+import Supports from './pages/Supports';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = app.auth.onAuthStateChanged((user) => {
+      // Check if the user is logged in or not
+      setUserLoggedIn(!!user);
+    });
+
+    // Unsubscribe from the listener when the component unmounts
+    return () => unsubscribe();
+  }, []); // Empty dependency array to run the effect only once on component mount
 
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <View style={styles.container}>
-          <Navbar/>
-          <User />
-          <WideButton text="My Network"/>
-          <Reflections />
-          <RecentAchievements />
-          <WideButton text="Resources" />
-          <Copyright />
-        <StatusBar style="auto" />
-      </View>
-    </ScrollView>
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          header: () => (userLoggedIn ? <Navbar /> : null), // Use Navbar as the custom header component
+        }}
+      >
+        {userLoggedIn ? (
+          // User is logged in, show Home component
+          <Stack.Screen name="Home" component={Home} />
+        ) : (
+          // User is not logged in, show LoginScreen
+          <Stack.Screen name="Login" component={LoginScreen} />
+        )}
+        <Stack.Screen name="Goals" component={Goals} />
+        <Stack.Screen name="Achievements" component={Achievements} />
+        <Stack.Screen name="Stressors" component={Stressors} />
+        <Stack.Screen name="Supports" component={Supports} />
+        <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: COLORS.lightModeBG,
-    padding: 40
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    width: 'auto'
-  },
-});

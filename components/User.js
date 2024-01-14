@@ -28,7 +28,7 @@ const userStyles = StyleSheet.create({
 	userContainer:
 	{
 		flexDirection: "row",
-		marginTop: 20,
+		marginTop: 0,
 		alignItems: 'center',
 		justifyContent: 'space-between'
 	},
