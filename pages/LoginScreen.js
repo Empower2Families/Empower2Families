@@ -1,5 +1,5 @@
-import { useNavigation } from 'expo-router';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView, TextInput } from 'react-native-gesture-handler';
@@ -13,10 +13,6 @@ const LoginScreen = ({navigation}) => {
   const [errorMessage, setErrorMessage] = useState('');
 
 	const auth = app.auth;
-
-  const navigateHome = () => {
-    navigation.navigate("Achievements");
-  }
 
 
   const signIn = async () => {

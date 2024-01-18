@@ -1,25 +1,68 @@
-import React from "react";
+import { doc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import app from '../config/firebaseConfig';
 import SmallButton from "./SmallButton";
 
-const User = () => {
+const User = ({navigation}) => {
 
-	// will create actual functionality later
-	const handleButtonPress = () => {
-		Alert.alert('Button Pressed');
-	  };
+	const[firstName, setFirstName] = useState('');
+	const[greeting, setGreeting] = useState('');
+
+	
+
+	useEffect(() => {
+		const user = app.auth.currentUser;
+		const database = app.db;
+
+		if(user)
+		{
+			const userRef = doc(database, 'users', user.uid);
+
+			getDoc(userRef)
+      			.then((docSnapshot) => {
+        			if (docSnapshot.exists()) {
+						// User document found, update the state with the user's first name
+						setFirstName(docSnapshot.data().firstName);
+						} else {
+						console.log('User document not found!');
+						}
+					})
+      			.catch((error) => {
+        			console.error('Error fetching user document:', error);
+      			});
+		}
+
+		// Determine time of day and set greeting
+		const currentHour = new Date().getHours();
+		let greeting;
+	  
+		if (currentHour >= 5 && currentHour < 12) {
+		  greeting = 'Good Morning';
+		} else if (currentHour >= 12 && currentHour < 18) {
+		  greeting = 'Good Afternoon';
+		} else {
+		  greeting = 'Good Evening';
+		}
+	  
+		setGreeting(greeting);
+	}, []);
+
+	const navigateToChildInfo = () => {
+		navigation.navigate("ChildInfo")
+	  }
 
 	return(
 	<View style={userStyles.userContainer}>
 		<View style={userStyles.account}>
 			<MaterialCommunityIcons name="account-circle" size={40} color="#000" style={userStyles.icon}/>
 			<View>
-				<Text style={userStyles.userName}>Hello, Joshua!</Text>
-				<Text style={userStyles.greeting}>Good Morning</Text>
+				<Text style={userStyles.userName}>Hello, {firstName}!</Text>
+				<Text style={userStyles.greeting}>{greeting}</Text>
 			</View>
 		</View>
-		<SmallButton text="Child Info" onPress={handleButtonPress} />
+		<SmallButton text="Child Info" onPress={navigateToChildInfo} />
 	</View>
 	);
 }

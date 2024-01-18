@@ -1,15 +1,24 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS } from "../constants";
 
 // Component that contains the 'E2F' logo and Hamburger menu
-const Navbar = () => (
+const Navbar = ({navigation}) => {
+	const navigateToHome = () => {
+		navigation.navigate("Home")
+	  }
+
+
+	return(
 	<View style={navStyles.navbarContainer}>
-		<Text style={navStyles.logo}>E2F</Text>
+		<Pressable onPress={navigateToHome}>
+			<Text style={navStyles.logo}>E2F</Text>
+		</Pressable>
 		<MaterialCommunityIcons name="menu" size={30} color="#000" />
 	</View>
-);
+	);
+};
 
 const navStyles = StyleSheet.create({
 	navbarContainer:

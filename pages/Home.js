@@ -11,14 +11,24 @@ import app from '../config/firebaseConfig';
 import { COLORS } from '../constants';
 
 export default function Home({navigation}) {
+
+  const navigateToNetwork = () => {
+    navigation.navigate("Network")
+  }
+
+  const navigateToResources = () => {
+    navigation.navigate("Resources")
+  }
+
+
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-        <User />
-        <WideButton text="My Network" />
+        <User navigation={navigation}/>
+        <WideButton text="My Network" onPress={navigateToNetwork}/>
         <Reflections navigation={navigation}/>
         <RecentAchievements />
-        <WideButton text="Resources" />
+        <WideButton text="Resources"  onPress={navigateToResources}/>
         <Copyright />
         <StatusBar style="auto" />
       </View>

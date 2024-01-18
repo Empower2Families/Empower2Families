@@ -6,7 +6,7 @@ import SmallButton from "./SmallButton";
 // Purpose: Contains Small Buttons that will take the user to the page for each of the four reflections.
 const Reflections = ({navigation}) => {
   const screenWidth = Dimensions.get("window").width;
-
+  
   const navigateToGoals = () => {
     navigation.navigate("Goals")
   }

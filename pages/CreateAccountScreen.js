@@ -1,4 +1,5 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { collection, doc, setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView, TextInput } from 'react-native-gesture-handler';
@@ -7,19 +8,36 @@ import { COLORS } from '../constants';
 
 
 const CreateAccountScreen = ({navigation}) => {
+	const db = app.db;
+	const auth = app.auth;
 
 	const signUp = async () => {
 		setLoading(true);
 		try {
 		  const response = await createUserWithEmailAndPassword(auth, email, password);
-		  console.log(response);
-		  setSuccessMessage('Account creation successful!')
+		  const user = response.user;
+		  // Create a Firestore document for the user with First Name and Last Name
+		  await setDoc(doc(collection(db, 'users'), user.uid), {
+			uid: user.uid,
+			firstName: fname,
+			lastName: lname,
+			email: email
+			// You can add other user-related data here
+		  });
+		  console.log('Firestore document created for user:', user.uid);
+		  setSuccessMessage('Account creation successful!');
+		  setEmail('');
+    	setPassword('');
+    	setFname('');
+    	setLname('');
 		} catch (error) {
 		  console.log(error);
 		} finally {
 		  setLoading(false);
 		}
 	  };
+
+
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,8 +46,6 @@ const CreateAccountScreen = ({navigation}) => {
   const [lname, setLname] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-	const auth = app.auth;
-	console.log(auth);
 
   return (
 	<GestureHandlerRootView style={styles.container}>
