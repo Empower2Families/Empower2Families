@@ -7,7 +7,6 @@ import RecentAchievements from '../components/RecentAchievements';
 import Reflections from '../components/Reflections';
 import User from '../components/User';
 import WideButton from '../components/WideButton';
-import app from '../config/firebaseConfig';
 import { COLORS } from '../constants';
 
 export default function Home({navigation}) {

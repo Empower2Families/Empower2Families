@@ -32,9 +32,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={{
-          header: () => (userLoggedIn ? <Navbar /> : null), // Use Navbar as the custom header component
-        }}
+        screenOptions={({ navigation }) => ({
+          header: () => (userLoggedIn ? <Navbar navigation={navigation} /> : null),
+        })}
       >
         {userLoggedIn ? (
           // User is logged in, show Home component

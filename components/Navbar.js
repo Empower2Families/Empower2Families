@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS } from "../constants";
+import CustomMenuIcon from "./CustomMenuIcon";
 
 // Component that contains the 'E2F' logo and Hamburger menu
 const Navbar = ({navigation}) => {
@@ -9,13 +9,18 @@ const Navbar = ({navigation}) => {
 		navigation.navigate("Home")
 	  }
 
+	const openNav = () => {
+		console.log('Navigation pane opened!');
+	}
 
 	return(
 	<View style={navStyles.navbarContainer}>
 		<Pressable onPress={navigateToHome}>
 			<Text style={navStyles.logo}>E2F</Text>
 		</Pressable>
-		<MaterialCommunityIcons name="menu" size={30} color="#000" />
+		<Pressable onPress={openNav}>
+			<CustomMenuIcon />
+		</Pressable>
 	</View>
 	);
 };
@@ -25,6 +30,7 @@ const navStyles = StyleSheet.create({
 	{
 		flexDirection: "row",
 		justifyContent: "space-between",
+		alignItems: 'center',
 		paddingHorizontal: 40,
 		paddingBottom: 20,
 		paddingTop: 60,
