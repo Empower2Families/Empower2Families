@@ -222,7 +222,6 @@ const Supports = () => {
       </Modal>
       <Modal visible={editModalVisible} transparent animationType="fade">
           <View style={styles.modalContainer}>
-            {/* ... (your existing code) */}
             <View style={styles.modalContent}>
               <TouchableOpacity style={styles.closeButton} onPress={closeEditModal}>
                 <MaterialCommunityIcons name="close" size={20} color="#000" />
@@ -282,7 +281,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    fontWeight: '900',
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   modalInput: {
@@ -315,7 +314,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: COLORS.lightText,
-    fontWeight: '900'
+    fontWeight: 'bold'
     },
   info: {
     color: 'grey',
