@@ -1,4 +1,10 @@
 // Goals.js
+// TODO:
+//    1. Get editing goal to work!
+//    2. Get setGoalMet to work!!!
+
+
+
 import { doc, getDoc, setDoc, } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -12,12 +18,20 @@ import { COLORS } from '../constants';
 const Goals = ({navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [goalText, setGoalText] = useState('');
+  
   const [goalMet, setGoalMet] = useState(false);
   const [goals, setGoals] = useState([]);
   const db = app.db;
   const user = app.auth.currentUser;
   const [isLoading, setIsLoading] = useState(true);
+
+  const [editModalVisible, setEditModalVisible] = useState(false); // New state for edit modal
+  const [goalText, setGoalText] = useState('');
+  const [editedGoalText, setEditedGoalText] = useState(''); // New state for edited support text
+  const [editingGoalId, setEditingGoalId] = useState(null); // New state for tracking the support being edited
+
+  const emptyMessage = "You don’t have any goals added yet, click the blue plus sign to add one!";
+
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -77,9 +91,110 @@ const Goals = ({navigation}) => {
     }
   };
 
+  const deleteGoal = async  (id) => {
+    try{
+    const userRef = doc(db, 'goals', user.uid);
+    const userDoc = await getDoc(userRef);
+    const currentGoals = userDoc.data()?.goals || [];
+
+    const updatedGoals = currentGoals.filter((_, index) => index.toString() !== id);
+
+    await setDoc(userRef, {
+      goals: updatedGoals
+    })
+
+          // Refresh the goals array
+          getGoals();
+        } catch (error) {
+          console.log(error);
+        }
+  };
+
+  const editGoals = async (id) => {
+    try {
+      const userRef = doc(db, 'goals', user.uid);
+      const userDoc = await getDoc(userRef);
+      const currentGoals = userDoc.data()?.goals || [];
+  
+      const editedGoals = await openEditModal(id, currentGoals[id]);
+  
+      if (editedGoals !== null) {
+        // Update the support with the specified id
+        currentGoals[id] = editedGoals;
+  
+        // Refresh the goals array
+        getGoals();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const saveEditedGoal = async () => {
+    try {
+      if (editedGoalText !== undefined && editedGoalText.trim() !== '') {
+        const userRef = doc(db, 'goals', user.uid);
+        const userDoc = await getDoc(userRef);
+        const currentGoals = userDoc.data()?.goals || [];
+  
+        // Modify the specific element in the array
+        currentGoals[editingGoalId] = editedGoalText;
+        console.log(editedGoalText);
+  
+        // Update the document with the modified array
+        await setDoc(userRef, {
+          goals: currentGoals,
+        });
+  
+        // Close the edit modal
+        closeEditModal();
+  
+        // Refresh the goals array
+        getGoals();
+      } else {
+        console.error('Invalid editedGoalText:', editedGoalText);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const setGoalToMet = async (id) => {
+    try {
+      if (editedGoalText !== undefined && editedGoalText.trim() !== '') {
+        const userRef = doc(db, 'goals', user.uid);
+        const userDoc = await getDoc(userRef);
+        const currentGoals = userDoc.data()?.goals || [];
+        
+        await setDoc(userRef, {
+          met: goalMet
+        })
+
+      // Refresh the goals array
+      getGoals();
+
+
+      }} catch (error) {
+        console.error(error);
+      }
+  };
+
   useEffect(() => {
     getGoals();
   }, []);
+
+
+  const openEditModal = (id, text) => {
+    setEditedGoalText(text);
+    setEditingGoalId(id);
+    setEditModalVisible(true);
+  };
+
+  const closeEditModal = () => {
+    setEditedGoalText('');
+    setEditingGoalId(null);
+    setEditModalVisible(false);
+  };
 
 
   return (
@@ -95,7 +210,7 @@ const Goals = ({navigation}) => {
               <Text style={styles.emptyMessage}>{emptyMessage}</Text>
             </View>
           ) : ( goals.map((goal) => (
-              <Goal key={goal.id} text={goal.text} met={goal.met} id={goal.id}/>)))}
+              <Goal key={goal.id} text={goal.text} met={goal.met} id={goal.id} onDelete={deleteGoal} onEdit={editGoals} onMet={setGoalToMet}/>)))}
           </View>
         </ScrollView>
         <AddButton onPress={toggleModal}/>
@@ -122,6 +237,25 @@ const Goals = ({navigation}) => {
           </View>
         </View>
       </Modal>
+      <Modal visible={editModalVisible} transparent animationType="fade">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity style={styles.closeButton} onPress={closeEditModal}>
+                <MaterialCommunityIcons name="close" size={20} color="#000" />
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Edit Support</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Enter your edited support here ..."
+                onChangeText={(text) => setEditedGoalText(text)}
+                value={editedGoalText}
+              />
+              <TouchableOpacity style={styles.button} onPress={saveEditedGoal}>
+                <Text style={styles.buttonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     </MenuProvider>
   );

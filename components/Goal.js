@@ -4,7 +4,7 @@ import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-m
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS } from '../constants';
 
-const Goal = ({text, met , id, onDelete, onEdit}) => {
+const Goal = ({text, met , id, onDelete, onEdit, onMet}) => {
   const [isMet, setIsMet] = useState(false);
 
   const openMenu = () => {
@@ -27,7 +27,7 @@ const Goal = ({text, met , id, onDelete, onEdit}) => {
         <MenuOption onSelect={() => onDelete(id)} >
           <Text style={{color: 'red'}}>Delete</Text>
         </MenuOption>
-        <MenuOption><Text style={{color: 'green'}}>Set to Done</Text></MenuOption>
+        <MenuOption onSelect={() => onMet(id)}><Text style={{color: 'green'}}>Set to Done</Text></MenuOption>
       </MenuOptions>
     </Menu>
     </View>
