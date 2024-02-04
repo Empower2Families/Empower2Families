@@ -5,14 +5,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { COLORS } from '../constants';
 
 const Goal = ({text, met , id, onDelete, onEdit, onMet}) => {
-  const [isMet, setIsMet] = useState(false);
-
-  const openMenu = () => {
-    console.log('menu open');
-  }
-
-
-
 
   return (
     <View style={listItemStyles.container}>

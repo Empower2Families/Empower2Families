@@ -1,14 +1,22 @@
+import { format } from 'date-fns'; // Import date-fns for formatting timestamps
 import React from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { COLORS } from '../constants';
 
-const Tile = ({ text, onPress }) => {
+const Tile = ({ text, onPress, timestamp }) => {
   const containerWidth = Dimensions.get('window').width;
   const buttonWidth = containerWidth / 4;
 
   return (
-    <TouchableOpacity style={[smallButtonStyles.button, { width: buttonWidth }]}>
-      <Text style={smallButtonStyles.buttonText}>{text}</Text>
+    <TouchableOpacity style={[smallButtonStyles.button, { width: buttonWidth }]} onPress={onPress}>
+      <Text style={smallButtonStyles.buttonText} numberOfLines={3} ellipsizeMode="tail">
+        {text}
+      </Text>
+      {timestamp && (
+        <Text style={smallButtonStyles.timestampText} numberOfLines={1} ellipsizeMode="tail">
+          {format(new Date(timestamp), 'MM/dd, hh:mm')}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 }
@@ -16,11 +24,11 @@ const Tile = ({ text, onPress }) => {
 const smallButtonStyles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.lightModeBG,
-    padding: 15,
+    padding: 10,
     borderRadius: 5,
-    marginVertical: 14,
-    height: 85,
-    justifyContent: 'flex-start',
+    marginVertical: 10,
+    height: 100,
+    justifyContent: 'space-between',
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -31,8 +39,14 @@ const smallButtonStyles = StyleSheet.create({
     shadowRadius: 10,
   },
   buttonText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 'bold',
+    width: "100%"
+  },
+  timestampText: {
+    fontSize: 12,
+    color: 'gray',
+    textAlign: 'center',
   },
 });
 

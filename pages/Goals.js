@@ -1,11 +1,5 @@
 // Goals.js
-// TODO:
-//    1. Get editing goal to work!
-//    2. Get setGoalMet to work!!!
-
-
-
-import { doc, getDoc, setDoc, } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -15,11 +9,9 @@ import Goal from '../components/Goal';
 import app from '../config/firebaseConfig';
 import { COLORS } from '../constants';
 
-const Goals = ({navigation}) => {
+const Goals = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  
-  const [goalMet, setGoalMet] = useState(false);
   const [goals, setGoals] = useState([]);
   const db = app.db;
   const user = app.auth.currentUser;
@@ -138,8 +130,7 @@ const Goals = ({navigation}) => {
         const currentGoals = userDoc.data()?.goals || [];
   
         // Modify the specific element in the array
-        currentGoals[editingGoalId] = editedGoalText;
-        console.log(editedGoalText);
+        currentGoals[editingGoalId].name = editedGoalText;
   
         // Update the document with the modified array
         await setDoc(userRef, {
@@ -161,23 +152,49 @@ const Goals = ({navigation}) => {
 
   const setGoalToMet = async (id) => {
     try {
-      if (editedGoalText !== undefined && editedGoalText.trim() !== '') {
-        const userRef = doc(db, 'goals', user.uid);
-        const userDoc = await getDoc(userRef);
-        const currentGoals = userDoc.data()?.goals || [];
-        
+      const userRef = doc(db, 'goals', user.uid);
+      const userDoc = await getDoc(userRef);
+      const currentGoals = userDoc.data()?.goals || [];
+      
+      // Check if the 'met' value is changing to true
+      if (!currentGoals[id].met) {
+        // Modify the 'met' property of the specific goal in the array
+        currentGoals[id].met = true;
+  
+        // Update the document with the modified array
         await setDoc(userRef, {
-          met: goalMet
-        })
-
-      // Refresh the goals array
-      getGoals();
-
-
-      }} catch (error) {
-        console.error(error);
+          goals: currentGoals,
+        });
+  
+        // Create a new entry in the achievements collection using addGoal approach
+        const achievementsRef = doc(db, 'achievements', user.uid);
+        const achievementsDoc = await getDoc(achievementsRef);
+        const currentAchievements = achievementsDoc.data()?.achievements || [];
+  
+        const newAchievement = { 
+          name: currentGoals[id].name,
+          accomplished: new Date().toISOString(),
+        };
+  
+        // Add the new achievement to the array
+        currentAchievements.push(newAchievement);
+  
+        // Update the document with the modified array
+        await setDoc(achievementsRef, {
+          achievements: currentAchievements,
+        });
+  
+        // Refresh the goals array
+        getGoals();
       }
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
+  
+  
+  
 
   useEffect(() => {
     getGoals();

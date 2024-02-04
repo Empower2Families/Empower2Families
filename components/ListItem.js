@@ -45,7 +45,8 @@ const listItemStyles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 15,
-	fontWeight: 'bold',
+	  fontWeight: 'bold',
+    width: '60%'
   },
   menu:{
     position: 'absolute',
