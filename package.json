@@ -39,7 +39,9 @@
     "react-native-status-bar-height": "^2.6.0",
     "react-native-vector-icons": "^10.0.3",
     "react-native-web": "~0.19.6",
-    "react-router-native": "^6.21.2"
+    "react-router-native": "^6.21.2",
+    "expo-updates": "~0.18.19",
+    "expo-contacts": "~12.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

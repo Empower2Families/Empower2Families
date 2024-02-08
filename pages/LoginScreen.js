@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.primaryLight, // Set your desired background color
+    backgroundColor: "white", // Set your desired background color
   },
   formContainer: {
     width: '80%',

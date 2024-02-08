@@ -1,19 +1,36 @@
-// Network.js
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as Contacts from 'expo-contacts';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import AddButton from '../components/AddButton';
+import Contact from '../components/Contact';
 
-const Network = ({navigation}) => {
+const Network = () => {
+  const [contacts, setContacts] = useState([]);
 
-  const navigateToHome = () => {
-    navigation.navigate("Home")
-  }
+  useEffect(() => {
+    (async () => {
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === 'granted') {
+        const { data } = await Contacts.getContactsAsync({
+          fields: [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers],
+        });
+
+        setContacts(data);
+      }
+    })();
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Network Page</Text>
-      <TouchableOpacity onPress={navigateToHome}>
-        <Text>Go Home</Text>
-      </TouchableOpacity>
+    <View>
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Contacts Module Example</Text>
+          {contacts.map((contact, index) => (
+            <Contact key={index} name={contact.name} />
+          ))}
+        </View>
+      </ScrollView>
+      <AddButton/>
     </View>
   );
 };
@@ -21,12 +38,16 @@ const Network = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'column',
+    paddingHorizontal: 40,
+	  paddingBottom: 40,
+	  paddingTop: 10,
+    backgroundColor: "white"
   },
   title: {
     fontSize: 20,
-    marginBottom: 50
+    marginBottom: 20,
+    fontWeight: 'bold',
   },
 });
 
