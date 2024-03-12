@@ -6,8 +6,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { COLORS } from '../constants';
 import app from '../config/firebaseConfig'
 import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import { Picker } from '@react-native-picker/picker';
+import * as Sms from 'expo-sms';
+
 
 import Contact from '../components/Contact';
+import NewMessageButton from '../components/NewMessageButton';
 
 // Function to format phone number as (###) ###-####
 const formatPhoneNumber = (phoneNumber) => {
@@ -32,6 +36,9 @@ const Network = () => {
   const [isLoading, setIsLoading] = useState(true);
   const emptyMessage = "You don’t have any supports added yet, click the blue plus sign to add one!";
   const [addModal, setAddModalVisible] = useState(false);
+  const [selectedTier, setSelectedTier] = useState(1);
+  const [isMessageModalVisible, setMessageModalVisible] = useState(false);
+  const [messageToSend, setMessageToSend] = useState("");
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -40,7 +47,10 @@ const Network = () => {
   const toggleAddModal = (contact) => {
     setAddModalVisible(!addModal);
     setSelectedContact(contact);
-    
+  }
+
+  const toggleMessageModal = () => {
+    setMessageModalVisible(!isMessageModalVisible);
   }
 
   const getNetwork = async () => {
@@ -55,8 +65,7 @@ const Network = () => {
         
         setNetwork(networkData.map((contact, index) => ({ 
           id: index.toString(), 
-          fname: contact.fname, 
-          lname: contact.lname, 
+          name: contact.name,
           level: contact.level, 
           phone: contact.phone 
         })));
@@ -65,6 +74,51 @@ const Network = () => {
       } finally {
         setIsLoading(false);
       }
+    }
+  };
+
+  const addContactToNetwork = async () => {
+    if (user && selectedContact) {
+      const networkRef = doc(db, 'network', user.uid);
+      const networkDoc = await getDoc(networkRef);
+      const networkData = networkDoc.data()?.network || [];
+  
+      const newContact = {
+        name: selectedContact.name,
+        phone: selectedContact.phoneNumbers && selectedContact.phoneNumbers.length > 0 ? formatPhoneNumber(selectedContact.phoneNumbers[0].number) : 'No Phone Number',
+        level: selectedTier
+      };
+  
+      try {
+        await setDoc(networkRef, { network: [...networkData, newContact] });
+        // Clear the selectedContact and selectedTier after adding to the network
+        setSelectedContact(null);
+        setSelectedTier(1);
+        setAddModalVisible(false);
+        getNetwork();
+      } catch (error) {
+        console.error('Error adding contact to network:', error);
+      }
+    }
+  };
+
+  const sendMessage = async () => {
+    try {
+      const tierContacts = network.filter(contact => contact.level === selectedTier);
+      const message = messageToSend; // Replace 'Your message here' with the actual message
+      const options = {
+        recipients: tierContacts.map(contact => contact.phone),
+        body: message,
+      };
+      const isAvailable = await Sms.isAvailableAsync();
+      if (isAvailable) {
+        await Sms.sendSMSAsync(options);
+        console.log('Messages sent successfully');
+      } else {
+        console.log('SMS is not available on this device');
+      }
+    } catch (error) {
+      console.error('Error sending SMS:', error);
     }
   };
 
@@ -103,24 +157,76 @@ const Network = () => {
 
   return (
     <View style={styles.overCon}>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.container}>
-          <Text style={styles.title}>My Network</Text>
-          {isLoading ? (
-              <ActivityIndicator size="large" color={COLORS.primaryColor} />
-            ) : network.length === 0 ? (
-              <View style={styles.emptyMessageConatiner}>
-                <Text style={styles.emptyMessage}>{emptyMessage}</Text>
-              </View>
-            ) : (
-              network.map((contact) => (
-                <View key={contact.id}>
-                  <Text>{contact.fname + " " + contact.lname + " " + contact.phone}</Text>
-                </View>
-              ))
-            )}
+  <ScrollView style={styles.scrollContainer}>
+    <View style={styles.container}>
+      <Text style={styles.title}>My Network</Text>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={COLORS.primaryColor} />
+      ) : network.length === 0 ? (
+        <View style={styles.emptyMessageConatiner}>
+          <Text style={styles.emptyMessage}>{emptyMessage}</Text>
         </View>
+      ) : (
+        // Iterate over each level
+        Array.from({ length: 5 }, (_, index) => {
+          const levelContacts = network.filter(contact => contact.level === index + 1);
+          if (levelContacts.length > 0) {
+            return (
+              <View key={index}>
+                <Text style={styles.levelHeader}>Tier {index + 1}</Text>
+                {levelContacts.map(contact => (
+                  <View key={contact.id} style={styles.contactDisplay}>
+                  <Text>
+                    {contact.name} {contact.phone} {contact.level}
+                  </Text>
+                  </View>
+                ))}
+              </View>
+            );
+          } else {
+            return null;
+          }
+        })
+      )}
+    </View>
       </ScrollView>
+      <NewMessageButton onPress={toggleMessageModal}/>
+      <Modal visible={isMessageModalVisible} transparent animationType="fade">
+        <View style={styles.messageModalContainer}>
+          {/* Modal content */}
+          <View style={styles.messageModalContent}>
+            {/* Close button */}
+            <TouchableOpacity style={styles.closeButton} onPress={toggleMessageModal}>
+              <MaterialCommunityIcons name="close" size={20} color="#000" />
+            </TouchableOpacity>
+            {/* Title */}
+            <Text style={styles.modalTitle}>Send Message</Text>
+            {/* Tier Picker */}
+            <Picker
+              selectedValue={selectedTier}
+              style={styles.picker}
+              onValueChange={(itemValue, itemIndex) => setSelectedTier(itemValue)}
+            >
+              <Picker.Item label="Tier 1" value={1} />
+              <Picker.Item label="Tier 2" value={2} />
+              <Picker.Item label="Tier 3" value={3} />
+              <Picker.Item label="Tier 4" value={4} />
+              <Picker.Item label="Tier 5" value={5} />
+            </Picker>
+            {/* Text Input */}
+            <TextInput
+              style={styles.messageInput}
+              placeholder="Type your message here..."
+              multiline
+              onChangeText={text => setMessageToSend(text)}
+            />
+            {/* Send button */}
+            <TouchableOpacity style={styles.button} onPress={sendMessage}>
+              <Text style={styles.buttonText}>Send</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <AddButton onPress={toggleModal}/>
       <Modal visible={isModalVisible} transparent animationType="fade">
         <View style={styles.modalContainer}>
@@ -158,7 +264,26 @@ const Network = () => {
               <MaterialCommunityIcons name="close" size={20} color="#000" />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Add Contact</Text>
-            <TouchableOpacity style={styles.button}>
+            {selectedContact && (
+              <View style={styles.selectedContactInfo}>
+                <Text>{selectedContact.name}</Text>
+                <Text>{selectedContact.phoneNumbers && selectedContact.phoneNumbers.length > 0 ? formatPhoneNumber(selectedContact.phoneNumbers[0].number) : 'No Phone Number'}</Text>
+              </View>
+            )}
+            <Text style={styles.tierText}>Set Tier</Text>
+            <Picker
+              selectedValue={selectedTier}
+              style={styles.picker}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedTier(itemValue)
+              }>
+              <Picker.Item label="1" value={1} />
+              <Picker.Item label="2" value={2} />
+              <Picker.Item label="3" value={3} />
+              <Picker.Item label="4" value={4} />
+              <Picker.Item label="5" value={5} />
+            </Picker>
+            <TouchableOpacity style={styles.button} onPress={addContactToNetwork}>
               <Text style={styles.buttonText}>Add Contact</Text>
             </TouchableOpacity>
           </View>
@@ -187,8 +312,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginBottom: 20,
     fontWeight: 'bold',
+  },
+  levelHeader: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    marginTop: 20
+  },
+  contactDisplay: {
+    fontSize: 14,
+    marginBottom: 5
   },
   modalContainer: {
     flex: 1,
@@ -243,6 +377,31 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '90%',
   },
+  messageModalContainer:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+  },
+  messageInput: {
+    height: 150,
+    textAlignVertical: 'top',
+    textAlign: 'left',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    borderColor: COLORS.primaryColor,
+    marginBottom: 20,
+    width: '90%'
+  },
+  messageModalContent: {
+    backgroundColor: 'white',
+    padding: 40,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '90%',
+  },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -264,7 +423,17 @@ const styles = StyleSheet.create({
   buttonText: {
     color: COLORS.lightText,
     fontWeight: 'bold'
-    },
+  },
+  picker: {
+    width: 175,
+    height: 50,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'black', // You can set the color of the border here
+  },
+  tierText: {
+    marginTop: 20
+  }
 });
 
 export default Network;
