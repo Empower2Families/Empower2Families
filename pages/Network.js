@@ -102,25 +102,47 @@ const Network = () => {
     }
   };
 
-  const sendMessage = async () => {
-    try {
-      const tierContacts = network.filter(contact => contact.level === selectedTier);
-      const message = messageToSend; // Replace 'Your message here' with the actual message
-      const options = {
-        recipients: tierContacts.map(contact => contact.phone),
-        body: message,
-      };
+const sendMessage = async () => {
+  try {
+    const tierContacts = network.filter(contact => contact.level === selectedTier);
+    const message = messageToSend; // Replace 'Your message here' with the actual message
+    const phoneNumbers = tierContacts.map(contact => contact.phone);
+    
+    // Check if messageToSend is empty or null
+    if (!message || message.trim() === '') {
+      console.log('Message is empty');
+      return;
+    }
+
+    // Send message to all phone numbers in the selected tier
+    for (const phoneNumber of phoneNumbers) {
+      // Check if phoneNumber is null or empty
+      if (!phoneNumber || phoneNumber.trim() === '') {
+        console.log('Invalid phone number');
+        continue; // Skip sending message to invalid phone numbers
+      }
+
+      console.log('Sending message to:', phoneNumber);
+      console.log('Message:', message);
+
       const isAvailable = await Sms.isAvailableAsync();
       if (isAvailable) {
-        await Sms.sendSMSAsync(options);
-        console.log('Messages sent successfully');
+        await Sms.sendSMSAsync(
+          phoneNumbers,
+          message
+        );
       } else {
         console.log('SMS is not available on this device');
       }
-    } catch (error) {
-      console.error('Error sending SMS:', error);
     }
-  };
+    console.log('Messages sent successfully');
+  } catch (error) {
+    console.error('Error sending SMS:', error);
+  }
+};
+
+
+  
 
   useEffect(() => {
     (async () => {
