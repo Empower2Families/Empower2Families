@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ActivityIndicator, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, ActivityIndicator, Modal, TextInput, Image } from 'react-native';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { COLORS } from '../constants';
 import app from '../config/firebaseConfig';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import EditButton from '../components/EditButton'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
+
 
 const ChildInfo = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -12,6 +16,7 @@ const ChildInfo = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasChildInfo, setHasChildInfo] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const db = app.db;
   const user = app.auth.currentUser;
@@ -44,9 +49,22 @@ const ChildInfo = ({ navigation }) => {
 
 
   useEffect(() => {
-
     getChildInfo();
+    
+    const fetchStoredImageURI = async () => {
+      try {
+        const storedImageURI = await AsyncStorage.getItem('selectedImageURI');
+        if (storedImageURI !== null) {
+          setSelectedImage(storedImageURI);
+        }
+      } catch (error) {
+        console.error('Error retrieving image URI from AsyncStorage:', error);
+      }
+    };
+  
+    fetchStoredImageURI();
   }, [user, db]);
+  
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
@@ -55,6 +73,27 @@ const ChildInfo = ({ navigation }) => {
   handleAddChildInfo = () => {
     toggleModal();
   }
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+  
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+      // Store the URI in AsyncStorage
+      try {
+        await AsyncStorage.setItem('selectedImageURI', result.assets[0].uri);
+        console.log('Image URI stored successfully');
+      } catch (error) {
+        console.error('Error storing image URI:', error);
+      }
+    }
+  };
 
   const handleSubmitChildInfo = async () => {
     try {
@@ -71,6 +110,7 @@ const ChildInfo = ({ navigation }) => {
     }
   };
 
+
   return (
     <View style={styles.overCon}>
       <ScrollView style={styles.scrollContainer}>
@@ -80,9 +120,19 @@ const ChildInfo = ({ navigation }) => {
             <ActivityIndicator size="large" color="#0000ff" />
           ) : hasChildInfo ? (
             <View style={styles.childInfo}>
-              <View style={styles.circle}></View>
-              <Text style={styles.name}>{name}</Text>
+              <TouchableOpacity style={styles.circle} onPress={pickImage}>
+              {selectedImage ? (
+                   <Image source={{ uri: selectedImage }} style={styles.circleImage} resizeMode="cover" />
+                ) : (
+                  <Text style={styles.uploadImageText}>Upload Image</Text>
+                )}
+    </TouchableOpacity>
+              <Text style={styles.name}>
+                <Text style={styles.nameTitle}>Name: </Text>
+                {name}
+              </Text>
               <Text style={styles.birthday}>
+                <Text style={styles.birthdayTitle}>Birthday: </Text>
                 {birthday}
               </Text>
               <Text style={styles.bio}>
@@ -102,6 +152,7 @@ const ChildInfo = ({ navigation }) => {
           )}
         </View>
       </ScrollView>
+      <EditButton onPress={toggleModal}/>
       <Modal visible={isModalVisible} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -154,16 +205,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontWeight: 'bold',
   },
-  name: {
-    fontSize: 24,
-    marginBottom: 15,
-    fontWeight: 'bold',
-  },
-  birthday: {
-    fontSize: 24,
-    marginBottom: 15,
-    fontWeight: 'bold',
-  },
+  
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -239,7 +281,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#d3d3d3',
     alignSelf: 'center',
     marginBottom: 20,
-    marginTop: 20
+    marginTop: 20,
+    overflow: 'hidden', // Clip any overflow content
+  },
+  circleImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 150, // Same as the container's borderRadius
   },
   childInfo: {
     alignItems: 'center',
@@ -250,6 +298,20 @@ const styles = StyleSheet.create({
     width: 250
   },
   bioTitle: {
+    fontWeight: 'bold',
+  },
+  name: {
+    fontSize: 24,
+    marginBottom: 15,
+  },
+  nameTitle: {
+    fontWeight: 'bold',
+  },
+  birthday: {
+    fontSize: 24,
+    marginBottom: 15,
+  },
+  birthdayTitle: {
     fontWeight: 'bold',
   },
   noChildInfoContainer: {
