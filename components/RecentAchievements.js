@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, getDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import app from '../config/firebaseConfig';
@@ -28,27 +28,29 @@ const RecentAchievements = () => {
   };
 
   const getAchievements = async () => {
-	setIsLoading(true);
-	const achievementsData = await fetchAchievements();
-	const sortedAchievements = achievementsData.sort((a, b) => b.timestamp - a.timestamp);
-	const recentAchievements = sortedAchievements.slice(-3).reverse();
-	setAchievements(recentAchievements);
-	setIsLoading(false);
+    setIsLoading(true);
+    const achievementsData = await fetchAchievements();
+    const sortedAchievements = achievementsData.sort((a, b) => b.timestamp - a.timestamp);
+    const recentAchievements = sortedAchievements.slice(-3).reverse();
+    setAchievements(recentAchievements);
+    setIsLoading(false);
   };
-  
-  
 
   useEffect(() => {
+    // Fetch achievements initially
     getAchievements();
+
+    // Set up real-time listener for achievements document
+    const unsubscribe = onSnapshot(achievementsRef, () => {
+      // When the document changes, fetch achievements again
+      getAchievements();
+    });
+
+    // Clean up the listener on component unmount
+    return () => {
+      unsubscribe();
+    };
   }, []);
-
-  const addAchievement = async (newAchievement) => {
-    // Logic to add newAchievement to Firestore
-    // ...
-
-    // After adding, fetch and update the achievements
-    await getAchievements();
-  };
 
   return (
     <View style={raStyles.raContainer}>

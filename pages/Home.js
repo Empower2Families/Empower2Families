@@ -28,7 +28,6 @@ export default function Home({navigation}) {
         <Reflections navigation={navigation}/>
         <RecentAchievements />
         <WideButton text="Resources"  onPress={navigateToResources}/>
-        <Copyright />
         <StatusBar style="auto" />
       </View>
     </ScrollView>

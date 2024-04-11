@@ -1,5 +1,5 @@
 // Achievements.js
-import { doc, getDoc, setDoc, } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -14,6 +14,7 @@ const Achievements = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [achievements, setAchievments] = useState([]);
+  const [newAchievementText, setNewAchievementText] = useState(''); // State for the new achievement text
   const db = app.db;
   const user = app.auth.currentUser;
   const [editModalVisible, setEditModalVisible] = useState(false); // New state for edit modal
@@ -23,7 +24,6 @@ const Achievements = () => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-
 
   const getAchievements = async () => {
     setIsLoading(true);
@@ -50,7 +50,39 @@ const Achievements = () => {
       }
     }
   };
+
+  const addAchievement = async () => {
+    try {
+      const userRef = doc(db, 'achievements', user.uid);
   
+      // Get the current achievements array from the document
+      const userDoc = await getDoc(userRef);
+      const currentAchievements = userDoc.data()?.achievements || [];
+  
+      // Check if the input is not empty
+      if (newAchievementText.trim().length > 0) {
+        // Add the new achievement to the array
+        currentAchievements.push({ name: newAchievementText, accomplished: new Date().toISOString() });
+
+        // Update the document with the modified array
+        await setDoc(userRef, {
+          achievements: currentAchievements,
+        });
+
+        toggleModal(); // Close the modal after adding achievement
+        // Refresh the achievements array
+        getAchievements();
+      } else {
+        setErrorMessage('Achievement cannot be blank.');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 5000);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getAchievements();
   }, []);
@@ -62,39 +94,43 @@ const Achievements = () => {
           <View style={styles.container}>
             <Text style={styles.title}>Achievements</Text>
             {isLoading ? (
-            <ActivityIndicator size="large" color={COLORS.primaryColor} />
-          ) : achievements.length === 0 ? (
-            <View style={styles.emptyMessageConatiner}>
-              <Text style={styles.emptyMessage}>{emptyMessage}</Text>
-            </View>
-          ) : ( achievements.map((achievement) => (
-              <Achievement key={achievement.id} text={achievement.text} timestamp={achievement.timestamp} id={achievement.id}/>)))}
+              <ActivityIndicator size="large" color={COLORS.primaryColor} />
+            ) : achievements.length === 0 ? (
+              <View style={styles.emptyMessageConatiner}>
+                <Text style={styles.emptyMessage}>{emptyMessage}</Text>
+              </View>
+            ) : (
+              achievements.map((achievement) => (
+                <Achievement key={achievement.id} text={achievement.text} timestamp={achievement.timestamp} id={achievement.id} />
+              ))
+            )}
           </View>
         </ScrollView>
-        <AddButton onPress={toggleModal}/>
+        <AddButton onPress={toggleModal} />
         <Modal visible={isModalVisible} transparent animationType="fade">
-        <View style={styles.modalContainer}>
-        {errorMessage !== '' && (
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        )}
-          <View style={styles.modalContent}>
-          <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
-          <MaterialCommunityIcons name="close" size={20} color="#000" />
-            </TouchableOpacity>
-            
-            <Text style={styles.modalTitle}>Add Achievement</Text>
-            <Text style={styles.info}>Add your achivements here!</Text>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Enter your achievement here ..."
-            />
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Add Achievement</Text>
-            </TouchableOpacity>
+          <View style={styles.modalContainer}>
+            {errorMessage !== '' && (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            )}
+            <View style={styles.modalContent}>
+              <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+                <MaterialCommunityIcons name="close" size={20} color="#000" />
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Add Achievement</Text>
+              <Text style={styles.info}>Add your achievements here!</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Enter your achievement here ..."
+                value={newAchievementText}
+                onChangeText={setNewAchievementText} // Update the state with the new value
+              />
+              <TouchableOpacity style={styles.button} onPress={addAchievement}>
+                <Text style={styles.buttonText}>Add Achievement</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
-      <Modal visible={editModalVisible} transparent animationType="fade">
+        </Modal>
+        <Modal visible={editModalVisible} transparent animationType="fade">
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <TouchableOpacity style={styles.closeButton}>
@@ -117,7 +153,7 @@ const Achievements = () => {
 };
 
 const styles = StyleSheet.create({
-  overCon:{
+  overCon: {
     height: '100%',
     backgroundColor: 'white'
   },
@@ -171,7 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     paddingHorizontal: 32,
-    borderRadius:5,
+    borderRadius: 5,
     backgroundColor: COLORS.primaryColor,
     elevation: 5,
     shadowColor: "#000",
@@ -187,52 +223,51 @@ const styles = StyleSheet.create({
   buttonText: {
     color: COLORS.lightText,
     fontWeight: 'bold'
-    },
+  },
   info: {
     color: 'grey',
     textAlign: 'center',
     marginBottom: 20,
     fontSize: 12
   },
-    // Style for the 'X' button
-    closeButton: {
-      position: 'absolute',
-      top: 10,
-      right: 10,
-      backgroundColor: 'white',
-      padding: 10,
-      borderRadius: 50,
-      zIndex: 1,
-    },
-  
-    closeButtonText: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: 'black',
-    },
-        errorText: {
-      color: 'red',
-      marginBottom: 10,
-      textAlign: 'center',
-      borderWidth: 2,
-      borderColor: 'red',
-      borderRadius: 5,
-      padding: 10,
-      backgroundColor: '#ffe8e9',
-      margin: 50,
-    },
-    emptyMessage: {
-      fontSize: 20,
-      textAlign: 'center',
-      color: 'grey',
-      marginTop: '60%',
-      width: '60%'
-    },
-    emptyMessageConatiner: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }
+  // Style for the 'X' button
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 50,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+    textAlign: 'center',
+    borderWidth: 2,
+    borderColor: 'red',
+    borderRadius: 5,
+    padding: 10,
+    backgroundColor: '#ffe8e9',
+    margin: 50,
+  },
+  emptyMessage: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: 'grey',
+    marginTop: '60%',
+    width: '60%'
+  },
+  emptyMessageConatiner: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default Achievements;
