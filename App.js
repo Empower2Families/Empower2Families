@@ -13,6 +13,7 @@ import Network from './pages/Network';
 import Resources from './pages/Resources';
 import Stressors from './pages/Stressors';
 import Supports from './pages/Supports';
+import Account from './pages/Account';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,7 @@ export default function App() {
           <Stack.Screen name="ChildInfo" component={ChildInfo} />
           <Stack.Screen name="Network" component={Network} />
           <Stack.Screen name="Resources" component={Resources} />
+          <Stack.Screen name="Account" component={Account} />
         </>
         ) : (
           // User is not logged in, show LoginScreen
