@@ -86,7 +86,10 @@ const userStyles = StyleSheet.create({
   userName:
   {
     fontWeight: 'bold',
-    fontSize: 15
+    fontSize: 15,
+    display: 'flex',
+    flexWrap: "wrap",
+    width: 90
   },
   greeting:
   {

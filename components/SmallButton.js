@@ -16,7 +16,7 @@ const SmallButton = ({ text, onPress }) => {
 const smallButtonStyles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.primaryColor,
-    padding: 15,
+    padding: 10,
     borderRadius: 5,
     marginVertical: 14,
     height: 85,

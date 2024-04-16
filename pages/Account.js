@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   userInfo: {
     fontSize: 18,
     marginBottom: 10,
+    textAlign: 'center'
   },
   logoutButton: {
     backgroundColor: COLORS.primaryColor,

@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    fontSize: 18
+    fontSize: 18,
   },
   noChildInfoText: {
     fontSize: 18,
@@ -326,7 +326,8 @@ const styles = StyleSheet.create({
   },
   addInfo: {
     color: COLORS.primaryColor,
-    fontSize: 18
+    fontSize: 18,
+    width: 175,
   },
   emptyMessageContainer: {
     flex: 1,
