@@ -36,26 +36,28 @@ export default function App() {
         screenOptions={({ navigation }) => ({
           header: () => (userLoggedIn ? <Navbar navigation={navigation} /> : null),
         })}
-      >
-        {userLoggedIn ? (
+      </Stack.Navigator> >
+    {
+      userLoggedIn?(
           // User is logged in, show Home component
           <>
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Goals" component={Goals} />
-          <Stack.Screen name="Achievements" component={Achievements} />
-          <Stack.Screen name="Stressors" component={Stressors} />
-          <Stack.Screen name="Supports" component={Supports} />
-          <Stack.Screen name="ChildInfo" component={ChildInfo} />
-          <Stack.Screen name="Network" component={Network} />
-          <Stack.Screen name="Resources" component={Resources} />
-          <Stack.Screen name="Account" component={Account} />
-        </>
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Goals" component={Goals} />
+            <Stack.Screen name="Achievements" component={Achievements} />
+            <Stack.Screen name="Stressors" component={Stressors} />
+            <Stack.Screen name="Supports" component={Supports} />
+            <Stack.Screen name="ChildInfo" component={ChildInfo} />
+            <Stack.Screen name="Network" component={Network} />
+            <Stack.Screen name="Resources" component={Resources} />
+            <Stack.Screen name="Account" component={Account} />
+          </>
         ) : (
-          // User is not logged in, show LoginScreen
-          <Stack.Screen name="Login" component={LoginScreen} />
-        )}
-        <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    // User is not logged in, show LoginScreen
+    <Stack.Screen name="Login" component={LoginScreen} />
+  )
+}
+<Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
+      </Stack.Navigator >
+    </NavigationContainer >
   );
 }
