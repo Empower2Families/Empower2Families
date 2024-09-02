@@ -13,11 +13,12 @@
 ## TODO
 
 - Add license file
+- Setup formatter
 - Modernize expo patterns in use
     - Get rid of typescript
 - Switch DB to be local-first?
     - How will we handle auth?
-- Setup formatter
+
 - Fix IOS UI bugs
 - Write tests
     - Find test framework
