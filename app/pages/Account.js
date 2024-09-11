@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import app from '../config/firebaseConfig';
+// import app from '../config/firebaseConfig';
 import { useState, useEffect } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+// import { doc, getDoc } from 'firebase/firestore';
 import { COLORS } from '../constants';
 
 const Account = ({ navigation }) => {
@@ -20,6 +20,7 @@ const Account = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
+  /*
   useEffect(() => {
     const user = app.auth.currentUser;
     const database = app.db;
@@ -42,6 +43,7 @@ const Account = ({ navigation }) => {
         });
     }
   }, []);
+  */
 
   return (
     <View style={styles.container}>

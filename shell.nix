@@ -16,7 +16,7 @@ let
   androidComposition = pkgs.androidenv.composeAndroidPackages { };
 in {
   default = pkgs.mkShell {
-    packages = with pkgs; [ nodejs_20 androidComposition.androidsdk ];
+    packages = with pkgs; [ nodejs_20 androidComposition.androidsdk nodePackages.typescript-language-server nil ];
     ANDROID_HOME = "${androidComposition.androidsdk}/libexec/android-sdk";
   };
 }
