@@ -1,24 +1,43 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Text } from 'react-native';
 
-import WideButton from '../components/WideButton';
+/**
+ * Sectioned Carosel (mynetwork, children)
+ * Button-to-search (resources)
+ *
+ */
+
+/*
+ * | topbar (greeting)
+ *
+ * | Children > *[ Reflections, Achievements ] |
+ * | MyNetwork |
+ * | Resources |
+ * | UserInfo |
+ */
 
 export default function Index() {
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-        {/* <User navigation={navigation} /> */}
-        <WideButton text="My Network" onPress={() => {}} />
-        {/* <Reflections navigation={navigation} /> */}
-        {/* <RecentAchievements /> */}
-        {/* <WideButton text="Resources" onPress={navigateToResources} /> */}
-        {/* <StatusBar style="auto" /> */}
+        <Text>Children</Text>
+        <View
+          style={{
+            borderBottomColor: 'black',
+            borderBottomWidth: StyleSheet.hairlineWidth,
+          }}
+        />
+        <Text>My Network</Text>
+        <View
+          style={{
+            borderBottomColor: 'black',
+            borderBottomWidth: StyleSheet.hairlineWidth,
+          }}
+        />
       </View>
     </ScrollView>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {

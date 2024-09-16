@@ -9,13 +9,13 @@ const Achievement = ({ text, timestamp }) => {
 
   return (
     <View style={listItemStyles.container}>
-        <Text style={listItemStyles.goalText}>
-          {text}
-        </Text>
-        <View style={listItemStyles.time}>
-          <Text style={listItemStyles.dateText}>{formattedDate}</Text>
-          <Text style={listItemStyles.timeText}>{formattedTime}</Text>
-        </View>
+      <Text style={listItemStyles.goalText}>
+        {text}
+      </Text>
+      <View style={listItemStyles.time}>
+        <Text style={listItemStyles.dateText}>{formattedDate}</Text>
+        <Text style={listItemStyles.timeText}>{formattedTime}</Text>
+      </View>
     </View>
   );
 };
@@ -45,17 +45,17 @@ const listItemStyles = StyleSheet.create({
     width: '60%', // Adjust the width as needed
   },
   time: {
-	textAlign: 'right'
-  },	
+    textAlign: 'right'
+  },
   dateText: {
     fontSize: 12,
     color: 'gray',
-	textAlign: 'right'
+    textAlign: 'right'
   },
   timeText: {
     fontSize: 12,
     fontWeight: 'bold',
-	textAlign: 'right'
+    textAlign: 'right'
   },
   goalItems: {
     flexDirection: 'row',

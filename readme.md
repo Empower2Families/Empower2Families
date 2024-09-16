@@ -37,3 +37,8 @@
 - [ ] Make Expo dev server persistent
 
 
+
+User auth with
+    - google: save db to google drive
+    - apple: save db to icloud
+
