@@ -1,9 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Colors } from '@/constants/Colors';
 
-export default function WideButton(text, onPress) {
+import Colors from '../constants/Colors';
+
+export default function WideButton({ text, onPress }) {
   return (
+    // Deprecated use pressable
     <TouchableOpacity style={wideButtonStyles.button} onPress={onPress}>
       <Text style={wideButtonStyles.buttonText}>{text}</Text>
     </TouchableOpacity>
@@ -12,7 +14,7 @@ export default function WideButton(text, onPress) {
 
 const wideButtonStyles = StyleSheet.create({
   button: {
-    backgroundColor: Colors.primaryColor,
+    // backgroundColor: Colors.primaryColor,
     padding: 15,
     borderRadius: 5,
     marginVertical: 10,
