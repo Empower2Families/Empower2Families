@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text } from 'react-native';
+import HorizontalRule from '@/components/HorizontalRule';
 
 /**
  * Sectioned Carosel (mynetwork, children)
@@ -21,19 +22,12 @@ export default function Index() {
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
         <Text>Children</Text>
-        <View
-          style={{
-            borderBottomColor: 'black',
-            borderBottomWidth: StyleSheet.hairlineWidth,
-          }}
-        />
+        <HorizontalRule />
+        <ScrollView horizontal={true}>
+        </ScrollView>
+
         <Text>My Network</Text>
-        <View
-          style={{
-            borderBottomColor: 'black',
-            borderBottomWidth: StyleSheet.hairlineWidth,
-          }}
-        />
+        <HorizontalRule />
       </View>
     </ScrollView>
   );
