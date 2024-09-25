@@ -1,53 +1,56 @@
+import { View, Image, StyleSheet, Pressable } from 'react-native'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
-import { Text, View, Image, StyleSheet, Pressable, useColorScheme } from 'react-native'
 import { Stack } from 'expo-router'
-import { MaterialIcons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar'
+import { MaterialIcons } from '@expo/vector-icons'
 import 'react-native-reanimated'
-import { StatusBar } from 'expo-status-bar';
 
-function LogoTitle(props) {
+import { useColorScheme } from '@/hooks/useColorScheme'
+
+function LogoTitle() {
   return (
-    <>
-      <Image style={styles.icon} source={require("@/assets/images/icon.png")} />
-      <Text style={styles.header}>{props.children}</Text>
-    </>
+    // TODO title icon
+    <></>// <Image style={styles.image} source={require("@/assets/images/icon.png")} />
   )
 }
 
 function SettingsButton() {
   return (
     <Pressable>
-      <MaterialIcons name="settings" color="black" size={30}/>
+      <MaterialIcons name="settings" style={{ padding: 15 }} size={30} />
     </Pressable>
   )
 }
 
 export default function RootLayout() {
-  const darkmode = useColorScheme()
-  const colorTheme = darkmode ? DarkTheme : DefaultTheme
-  
+  const colorScheme = useColorScheme()
+  const colorTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme
+
   return (
     <ThemeProvider value={colorTheme}>
-      <StatusBar style="dark" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{
-        headerTitle: props => <LogoTitle {...props} />,
+        headerLeft: () => <LogoTitle />,
         headerRight: () => <SettingsButton />,
-      }}> 
+        headerTitleStyle: styles.header
+      }}>
         {/* Content for each page will be placed here */}
-        <Stack.Screen name="index" options={{title: "Home"}} />
+        <Stack.Screen name="index" options={{ title: "Home" }} />
       </Stack>
     </ThemeProvider>
   )
 }
 
 const styles = StyleSheet.create({
-  icon: {
+  image: {
     width: 30,
-    height: 30
+    height: 30,
+    paddingLeft: 15,
+    alignSelf: 'flex-end'
   },
   header: {
-    padding: 8,
+    // TODO center header text
     fontSize: 18,
-    fontWeight: "bold" 
+    fontWeight: 'bold',
   }
 });

@@ -1,33 +1,13 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
-import HorizontalRule from '@/components/HorizontalRule';
-
-/**
- * Sectioned Carosel (mynetwork, children)
- * Button-to-search (resources)
- *
- */
-
-/*
- * | topbar (greeting)
- *
- * | Children > *[ Reflections, Achievements ] |
- * | MyNetwork |
- * | Resources |
- * | UserInfo |
- */
+import { ScrollView, StyleSheet, View, Text, Pressable } from 'react-native';
+import WideButton from '@/components/WideButton';
 
 export default function Index() {
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-        <Text>Children</Text>
-        <HorizontalRule />
-        <ScrollView horizontal={true}>
-        </ScrollView>
-
-        <Text>My Network</Text>
-        <HorizontalRule />
+        <WideButton>
+        </WideButton>
       </View>
     </ScrollView>
   );
