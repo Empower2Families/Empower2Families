@@ -6,8 +6,7 @@ export default function Index() {
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-        <WideButton>
-        </WideButton>
+        <WideButton text={"Hello!"} onPress={() => { }} />
       </View>
     </ScrollView>
   );

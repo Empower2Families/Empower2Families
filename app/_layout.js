@@ -1,10 +1,11 @@
-import { View, Image, StyleSheet, Pressable } from 'react-native'
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { StyleSheet, Pressable } from 'react-native'
+import { ThemeProvider } from '@react-navigation/native'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { MaterialIcons } from '@expo/vector-icons'
 import 'react-native-reanimated'
 
+import Theme from '@/constants/Theme'
 import { useColorScheme } from '@/hooks/useColorScheme'
 
 function LogoTitle() {
@@ -24,10 +25,10 @@ function SettingsButton() {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme()
-  const colorTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme
+  const theme = colorScheme === 'dark' ? Theme.dark : Theme.light
 
   return (
-    <ThemeProvider value={colorTheme}>
+    <ThemeProvider theme={theme}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{
         headerLeft: () => <LogoTitle />,

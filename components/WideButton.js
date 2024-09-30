@@ -1,9 +1,11 @@
-import { Pressable, StyleSheet } from "react-native"
+import { Text, Pressable, StyleSheet } from "react-native"
+import { useTheme } from '@react-navigation/native'
 
-export default function WideButton() {
+export default function WideButton({ text, onPress }) {
+  let colors = useTheme()
   return (
-    <Pressable style={style.button}>
-
+    <Pressable style={{ ...style.button, backgroundColor: colors.primary }}>
+      <Text style={style.buttonText} onPress={onPress}>{text}</Text>
     </Pressable>
   )
 }
@@ -11,7 +13,25 @@ export default function WideButton() {
 const style = StyleSheet.create({
   button: {
     width: '100%',
-    height: 50, // TODO for some reason setting height as percentage doesn't work
-    backgroundColor: 'steelblue',
-  }
+    height: 85,
+    padding: 15,
+    borderRadius: 5,
+    marginVertical: 10,
+    justifyContent: 'flex-end',
+    elevation: 5,
+    boxShadow: {
+      color: "#000",
+      radius: 10,
+      opacity: 0.2,
+      offset: {
+        width: 2,
+        height: 4,
+      },
+    }
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
 })
