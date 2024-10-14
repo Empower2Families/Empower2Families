@@ -1,36 +1,88 @@
-import React, {useEffect} from 'react'
-import {ScrollView, StyleSheet, Text, View} from 'react-native'
+import React, {useEffect, useState} from 'react'
+import {ScrollView, StyleSheet, Text, View, Button} from 'react-native'
+import {CloudStorage, CloudStorageProvider, CloudStorageScope} from 'react-native-cloud-storage';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
 
 import {COLORS} from '../constants/Colors'
 import WideNavButton from '../components/WideNavButton'
-import {CloudStorage, CloudStorageProvider, useIsCloudAvailable} from 'react-native-cloud-storage'
 
-function SyncStatus() {
-  // Check if we can sync with a cloud storage provider
-  const cloudAvailable = useIsCloudAvailable()
+WebBrowser.maybeCompleteAuthSession();
+
+const Login = () => {
+  const [accessToken, setAccessToken] = useState(null);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+    // if you're also deploying to web, uncomment the next line
+//    webClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+    scopes: ['https://www.googleapis.com/auth/drive.appdata'],
+  });
 
   useEffect(() => {
-    if (CloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
-
+    console.log(response)
+    if (response?.type === 'success') {
+      setAccessToken(response.authentication.accessToken);
     }
-  }, [])
+
+    if (accessToken && CloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
+      CloudStorage.setProviderOptions({accessToken});
+    }
+  }, [response, accessToken]);
+
+  const writeFileAsync = () => {
+    return CloudStorage.writeFile('test.txt', 'Hello World', CloudStorageScope.AppData);
+  };
 
   return (
-    <View>
-      {cloudAvailable ? (
-        <Text>Works!</Text>
+    <View style={styles.container}>
+      {CloudStorage.getProvider() === CloudStorageProvider.GoogleDrive && !accessToken ? (
+        <Button
+          title="Sign in with Google"
+          disabled={!request}
+          onPress={() => {
+            promptAsync();
+          }}
+        />
       ) : (
-        <Text>No Cloud provider!</Text>
+        <Button
+          title="Write Hello World to test.txt"
+          onPress={() => {
+            writeFileAsync();
+          }}
+        />
       )}
     </View>
-  )
-}
+  );
+};
+
+
+//function SyncStatus() {
+//  // Check if we can sync with a cloud storage provider
+//  const cloudAvailable = useIsCloudAvailable()
+//
+//  useEffect(() => {
+//    if (CloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
+//
+//    }
+//  }, [])
+//
+//  return (
+//    <View>
+//      {cloudAvailable ? (
+//        <Text>Works!</Text>
+//      ) : (
+//        <Text>No Cloud provider!</Text>
+//      )}
+//    </View>
+//  )
+//}
 
 export default function Home() {
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
-        <SyncStatus/>
+        <Login/>
         <WideNavButton text="Resources" navTo="/resources"/>
       </View>
     </ScrollView>
@@ -51,5 +103,4 @@ const styles = StyleSheet.create({
     width: 'auto',
   },
 })
-
 

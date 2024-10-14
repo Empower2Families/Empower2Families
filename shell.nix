@@ -13,10 +13,26 @@
 , ...
 }:
 let
-  androidComposition = pkgs.androidenv.composeAndroidPackages { };
+  androidComposition = pkgs.androidenv.composeAndroidPackages {
+    platformVersions = [ "34" ];
+    cmakeVersions = [ "3.22.1" ];
+    includeNDK = true;
+    ndkVersions = ["26.1.10909125"];
+    systemImageTypes = [ "google_apis_playstore" ];
+
+    #abiVersions = [ "armeabi-v7a" "arm64-v8a" ];
+    includeSources = false;
+    includeEmulator = false;
+    includeSystemImages = false;
+    useGoogleAPIs = false;
+    useGoogleTVAddOns = false;
+    includeExtras = [
+      "extras;google;gcm"
+    ];
+  };
 in {
   default = pkgs.mkShell {
-    packages = with pkgs; [ nodejs_20 androidComposition.androidsdk nodePackages.typescript-language-server nil ];
+    packages = with pkgs; [ nodejs_20 temurin-bin-17 androidComposition.androidsdk nodePackages.typescript-language-server nil ];
     ANDROID_HOME = "${androidComposition.androidsdk}/libexec/android-sdk";
   };
 }

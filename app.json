@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "myapp",
+    "scheme": "com.empower2families.e2f",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",

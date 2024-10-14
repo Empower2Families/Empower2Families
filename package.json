@@ -5,8 +5,8 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint"
   },
@@ -33,7 +33,10 @@
     "react-native-web": "~0.19.10",
     "react-navigation": "^4.3.0",
     "react-navigation-header-buttons": "^12.0.1",
-    "react-navigation-stack": "^2.10.4"
+    "react-navigation-stack": "^2.10.4",
+    "expo-auth-session": "~5.5.2",
+    "expo-crypto": "~13.0.2",
+    "@react-native-async-storage/async-storage": "1.23.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
