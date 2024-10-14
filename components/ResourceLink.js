@@ -1,6 +1,6 @@
 import React from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
-import { COLORS } from '../constants';
+import { COLORS } from '../constants/Colors';
 
 const ResourceLink = ({ name, description, website, phone, onPress }) => {
 
@@ -28,9 +28,9 @@ const wideButtonStyles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     marginVertical: 10,
-	  justifyContent: 'center',
-  	elevation: 5,
-	  shadowColor: "#000",
+    justifyContent: 'center',
+    elevation: 5,
+    shadowColor: "#000",
     shadowOffset: {
       width: 2,
       height: 4,
@@ -41,13 +41,13 @@ const wideButtonStyles = StyleSheet.create({
   buttonText: {
     color: 'black',
     fontSize: 16,
-	  fontWeight: 'bold',
+    fontWeight: 'bold',
     marginBottom: 5
   },
   buttonLink: {
     color: COLORS.primaryColor,
     fontSize: 15,
-	  fontWeight: 'bold',
+    fontWeight: 'bold',
     marginTop: 5
   }
 });
