@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "com.empower2families.e2f",
+    "scheme": "myapp",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -37,6 +37,11 @@
     "plugins": [
       "expo-router",
       "react-native-cloud-storage"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "8c6e1d1a-5a4d-46e0-9ed3-62d129d32c93"
+      }
+    }
   }
 }

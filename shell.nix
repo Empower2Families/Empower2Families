@@ -17,7 +17,7 @@ let
     platformVersions = [ "34" ];
     cmakeVersions = [ "3.22.1" ];
     includeNDK = true;
-    ndkVersions = ["26.1.10909125"];
+    ndkVersions = ["26.1.10909125" "25.1.8937393"];
     systemImageTypes = [ "google_apis_playstore" ];
 
     #abiVersions = [ "armeabi-v7a" "arm64-v8a" ];

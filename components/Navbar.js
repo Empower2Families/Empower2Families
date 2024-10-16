@@ -1,12 +1,13 @@
 import React from "react"
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import {Pressable, StyleSheet, Text, View} from "react-native"
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Link, router } from "expo-router"
+import {Link, router} from "expo-router"
 
-import { COLORS } from "../constants/Colors"
+import {COLORS} from "../constants/Colors"
 
 // Component that contains the 'E2F' logo and home button
 // TODO style text component separate from logo
+// TODO add agreed logo style
 export default function Navbar() {
   return (
     <View style={navStyles.navbarContainer}>
@@ -16,7 +17,7 @@ export default function Navbar() {
       ) : (
         <Link href="/" asChild>
           <Pressable>
-            <MaterialCommunityIcons name="home" size={32} color="black" />
+            <MaterialCommunityIcons name="home" size={32} color="black"/>
           </Pressable>
         </Link>
       )}

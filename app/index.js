@@ -1,26 +1,47 @@
-import React, {useEffect, useState} from 'react'
-import {ScrollView, StyleSheet, Text, View, Button} from 'react-native'
-import {CloudStorage, CloudStorageProvider, CloudStorageScope} from 'react-native-cloud-storage';
+import React, {useState, useEffect} from 'react'
+import {ScrollView, StyleSheet, Text, View, Pressable, Button} from 'react-native'
+import {CloudStorage, CloudStorageProvider, CloudStorageScope} from "react-native-cloud-storage";
+import {MaterialCommunityIcons} from "@expo/vector-icons";
+import {useSQLiteContext} from "expo-sqlite";
+import {useDrizzleStudio} from "expo-drizzle-studio-plugin";
+import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
 
 import {COLORS} from '../constants/Colors'
 import WideNavButton from '../components/WideNavButton'
+import SmallNavButton from "../components/SmallNavButton";
 
 WebBrowser.maybeCompleteAuthSession();
+
+export default function Home() {
+  const db = useSQLiteContext()
+  useDrizzleStudio(db)
+
+  return (
+    <ScrollView style={styles.scrollContainer}>
+      <View style={styles.container}>
+        <View style={styles.userContainer}>
+          <Login/>
+          {/*<SyncStatus/>*/}
+          {/*<SmallNavButton text="Child Info" navTo="child-info"/>*/}
+        </View>
+
+        <WideNavButton text="Resources" navTo="/resources"/>
+      </View>
+    </ScrollView>
+  )
+}
+
 
 const Login = () => {
   const [accessToken, setAccessToken] = useState(null);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
-    // if you're also deploying to web, uncomment the next line
-//    webClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+    androidClientId: 'TODO how to manage secrets',
     scopes: ['https://www.googleapis.com/auth/drive.appdata'],
   });
 
   useEffect(() => {
-    console.log(response)
     if (response?.type === 'success') {
       setAccessToken(response.authentication.accessToken);
     }
@@ -57,35 +78,17 @@ const Login = () => {
 };
 
 
-//function SyncStatus() {
-//  // Check if we can sync with a cloud storage provider
-//  const cloudAvailable = useIsCloudAvailable()
-//
-//  useEffect(() => {
-//    if (CloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
-//
-//    }
-//  }, [])
-//
-//  return (
-//    <View>
-//      {cloudAvailable ? (
-//        <Text>Works!</Text>
-//      ) : (
-//        <Text>No Cloud provider!</Text>
-//      )}
-//    </View>
-//  )
-//}
-
-export default function Home() {
+function SyncStatus() {
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <View style={styles.container}>
-        <Login/>
-        <WideNavButton text="Resources" navTo="/resources"/>
+    <Pressable>
+      <View style={{alignItems: "center", flexDirection: "row"}}>
+        <MaterialCommunityIcons name="account-circle" size={40} color="#000" style={{marginRight: 5}}/>
+        <View>
+          <Text style={styles.userNameMainText}>Hello, (TEMP)</Text>
+          <Text style={styles.userNameSmallText}>sync status</Text>
+        </View>
       </View>
-    </ScrollView>
+    </Pressable>
   )
 }
 
@@ -102,5 +105,22 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     width: 'auto',
   },
+  userContainer: {
+    flexDirection: "row",
+    marginTop: 0,
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  userNameMainText: {
+    fontWeight: "bold",
+    fontSize: 15,
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  userNameSmallText: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#A3A3A3"
+  }
 })
 

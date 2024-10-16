@@ -1,13 +1,13 @@
-#
+# Empower2Families
 
 ## Components
 
 - NavBar
-- Button 
+- Button
 - WideButton
 - ButtonGrid
 
-## Pages 
+## Pages
 
 - Home
 - Settings
@@ -18,3 +18,4 @@
 - Stressors
 - Resources
 - Supports
+
