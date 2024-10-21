@@ -20,10 +20,12 @@ let
     ndkVersions = ["26.1.10909125" "25.1.8937393"];
     systemImageTypes = [ "google_apis_playstore" ];
 
+    includeEmulator = true;
+    includeSystemImages = true;
+    emulatorVersion = "35.1.4";
+
     #abiVersions = [ "armeabi-v7a" "arm64-v8a" ];
     includeSources = false;
-    includeEmulator = false;
-    includeSystemImages = false;
     useGoogleAPIs = false;
     useGoogleTVAddOns = false;
     includeExtras = [

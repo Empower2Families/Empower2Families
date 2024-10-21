@@ -18,21 +18,34 @@ import {COLORS} from '../constants/Colors';
 import {useSQLiteContext} from "expo-sqlite";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import EditButton from '../components/EditButton'
-
+import {Asset, useAssets} from 'expo-asset'
 
 export default function ChildInfo() {
     // Get DB from current context
     const db = useSQLiteContext()
 
-    //    useEffect(function () {
-    //        async function effect() {
-    //            const firstRow = await db.getFirstAsync("SELECT * FROM todos")
-    //            console.log(firstRow.id, firstRow.value, firstRow.intValue)
-    //        }
-    //
-    //        effect().then(r => {
-    //        })
-    //    })
+//    const [assets, error] = useAssets([require('assets/images/IMG_20241007_153417.jpg')]);
+
+    // TODO populate from DB
+    let hasChildInfo = true
+    let [name, setName] = useState("")
+    let [bio, setBio] = useState("")
+    let [birthday, setBirthday] = useState("")
+    let [selectedImage, selectImage] = useState("");
+    let [isModalVisible, setModalVisible] = useState(false)
+
+    useEffect(function () {
+        async function effect() {
+            const firstRow = await db.getFirstAsync("SELECT * FROM childInfo")
+            return firstRow
+        }
+
+        effect().then(r => {
+            setName(r.name)
+            setBio(r.bio)
+            setBirthday(r.bday)
+        })
+    }, [db])
 
     // Get child info shallow, don't follow any links
 
@@ -42,13 +55,6 @@ export default function ChildInfo() {
 
     // Helper function to write to persitent db
 
-    // TODO populate from DB
-    let hasChildInfo = true
-    let [name, setName] = useState("test")
-    let [bio, setBio] = useState("test")
-    let [birthday, setBirthday] = useState("test")
-    let [selectedImage, selectImage] = useState(null);
-    let [isModalVisible, setModalVisible] = useState(false)
     let pickImage = () => {
     }
     let handleAddChildInfo = () => {
@@ -66,7 +72,7 @@ export default function ChildInfo() {
                             {/* Child image/image upload */}
                             <Pressable style={styles.circle} onPress={pickImage}>
                                 {selectedImage ? (
-                                    <Image source={{uri: selectedImage}} style={styles.circleImage} resizeMode="cover"/>
+                                    <Image source={assets[0]} style={styles.circleImage} resizeMode="cover"/>
                                 ) : (
                                     <Text style={styles.circleText}>Upload Image</Text>
                                 )}

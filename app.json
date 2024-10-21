@@ -38,9 +38,9 @@
       "expo-router",
       "react-native-cloud-storage",
       [
-        "@react-native-google-signin/google-signin",
+        "expo-asset",
         {
-          "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
+          "assets": ["assets/images/IMG_20241007_153417"]
         }
       ]
     ],

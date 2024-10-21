@@ -37,6 +37,7 @@ const migrations = [
                 bio TEXT
             );
         `)
+        db.runAsync('INSERT INTO childInfo (name, bday, bio) VALUES (?, ?, ?)', 'Test Name', 'May/22/2004', "This is an example bio")
         //        await db.runAsync('INSERT INTO todos (value, intValue) VALUES (?, ?)', 'hello', 1);
         //        await db.runAsync('INSERT INTO todos (value, intValue) VALUES (?, ?)', 'world', 2);
     },

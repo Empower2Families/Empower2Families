@@ -40,51 +40,45 @@ const Login = () => {
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '',
-    scopes: ['https://www.googleapis.com/auth/drive.appdata'],
+    scopes: ['https://www.googleapis.com/auth/drive.appdata']
   })
-  const cloudStorage = new CloudStorage(CloudStorageProvider.GoogleDrive, {strictFilenames: true})
-//  const cloudAvailable = useIsCloudAvailable(cloudStorage)
-//
-//  useEffect(() => {
-//    console.log(cloudAvailable ? 'Cloud storage available' : 'Cloud storage not available');
-//  }, [cloudAvailable])
 
-  useEffect(() => {
+  useEffect(function() {
     if (response?.type === 'success') {
       setAccessToken(response.authentication.accessToken);
     }
+//    if (accessToken && cloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
+//      CloudStorage.setProviderOptions({accessToken});
+//    }
+  }, [response, accessToken]);
 
-    if (accessToken && cloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
-      cloudStorage.setProviderOptions({accessToken});
-    }
-  }, [response, accessToken, cloudStorage]);
+  // will be re-created when the access token changes
+  const cloudStorage = useMemo(function()  {
+    return new CloudStorage(CloudStorageProvider.GoogleDrive, { accessToken })
+  }, [accessToken]);
 
+
+  // test interface
   const writeFileAsync = () => {
-    return cloudStorage.writeFile('/.keep', '', CloudStorageScope.AppData).then(() => {
-      console.log("worked")
-      return cloudStorage.writeFile('test.txt', 'Hello World', CloudStorageScope.AppData);
-    }, (reason) => console.log("failed ", reason))
+    return cloudStorage.writeFile('/test.txt', 'Hello World', CloudStorageScope.AppData);
   };
 
   const printFileAsync = () => {
-    cloudStorage.readFile("test.txt", CloudStorageScope.AppData).then((mystr) => {
-      console.log(mystr)
-    }, reason => console.log(reason))
+    const content = cloudStorage.readFile("/test.txt")
+    content.then(str => console.log(str), reason => console.log(reason))
+    console.log(content)
   }
 
   return (
     <View style={styles.container}>
-      {CloudStorage.getProvider() === CloudStorageProvider.GoogleDrive && !accessToken ? (
-        <Button
-          title="Sign in with Google"
-          disabled={!request}
-          onPress={() => promptAsync()}
-        />
+      {cloudStorage.getProvider() === CloudStorageProvider.GoogleDrive && !accessToken ? (
+        <Button title="Sign in" disabled={!request} onPress={() => promptAsync()}/>
       ) : (
         <Button
           title="Write Hello World to test.txt"
           onPress={() => {
-            writeFileAsync().then(() => printFileAsync())
+            writeFileAsync().then(() => printFileAsync(), reason => console.log("failed to write ", reason))
+            printFileAsync()
           }}
         />
       )}
