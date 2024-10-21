@@ -1,7 +1,7 @@
 import React from "react"
 import {Pressable, StyleSheet, Text, View} from "react-native"
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import {Link, router} from "expo-router"
+import {MaterialCommunityIcons} from "@expo/vector-icons";
 
 import {COLORS} from "../constants/Colors"
 

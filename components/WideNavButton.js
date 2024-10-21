@@ -1,9 +1,9 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
-import { COLORS } from '../constants/Colors';
-import { Link } from 'expo-router';
+import {Pressable, StyleSheet, Text} from 'react-native';
+import {COLORS} from '../constants/Colors';
+import {Link} from 'expo-router';
 
-export default function WideNavButton({ text, navTo }) {
+export default function WideNavButton({text, navTo}) {
   return (
     <Link href={navTo} asChild>
       <Pressable style={wideButtonStyles.button}>

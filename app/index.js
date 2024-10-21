@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react'
-import {ScrollView, StyleSheet, Text, View, Pressable, Button} from 'react-native'
-import {CloudStorage, CloudStorageProvider, CloudStorageScope} from "react-native-cloud-storage";
+import React, {useState, useEffect, useMemo} from 'react'
+import {ScrollView, StyleSheet, Text, View, Pressable, Button, Alert} from 'react-native'
+import {CloudStorage, CloudStorageProvider, CloudStorageScope, useIsCloudAvailable} from "react-native-cloud-storage";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import {useSQLiteContext} from "expo-sqlite";
 import {useDrizzleStudio} from "expo-drizzle-studio-plugin";
@@ -10,6 +10,9 @@ import * as WebBrowser from 'expo-web-browser';
 import {COLORS} from '../constants/Colors'
 import WideNavButton from '../components/WideNavButton'
 import SmallNavButton from "../components/SmallNavButton";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {router} from "expo-router";
+import {GoogleSignin, statusCodes} from "@react-native-google-signin/google-signin";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -21,9 +24,9 @@ export default function Home() {
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.userContainer}>
-          <Login/>
-          {/*<SyncStatus/>*/}
-          {/*<SmallNavButton text="Child Info" navTo="child-info"/>*/}
+          {/*<Login/>*/}
+          <SyncStatus/>
+          <SmallNavButton text="Child Info" navTo="child-info"/>
         </View>
 
         <WideNavButton text="Resources" navTo="/resources"/>
@@ -32,28 +35,42 @@ export default function Home() {
   )
 }
 
-
 const Login = () => {
   const [accessToken, setAccessToken] = useState(null);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: 'TODO how to manage secrets',
+    androidClientId: '',
     scopes: ['https://www.googleapis.com/auth/drive.appdata'],
-  });
+  })
+  const cloudStorage = new CloudStorage(CloudStorageProvider.GoogleDrive, {strictFilenames: true})
+//  const cloudAvailable = useIsCloudAvailable(cloudStorage)
+//
+//  useEffect(() => {
+//    console.log(cloudAvailable ? 'Cloud storage available' : 'Cloud storage not available');
+//  }, [cloudAvailable])
 
   useEffect(() => {
     if (response?.type === 'success') {
       setAccessToken(response.authentication.accessToken);
     }
 
-    if (accessToken && CloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
-      CloudStorage.setProviderOptions({accessToken});
+    if (accessToken && cloudStorage.getProvider() === CloudStorageProvider.GoogleDrive) {
+      cloudStorage.setProviderOptions({accessToken});
     }
-  }, [response, accessToken]);
+  }, [response, accessToken, cloudStorage]);
 
   const writeFileAsync = () => {
-    return CloudStorage.writeFile('test.txt', 'Hello World', CloudStorageScope.AppData);
+    return cloudStorage.writeFile('/.keep', '', CloudStorageScope.AppData).then(() => {
+      console.log("worked")
+      return cloudStorage.writeFile('test.txt', 'Hello World', CloudStorageScope.AppData);
+    }, (reason) => console.log("failed ", reason))
   };
+
+  const printFileAsync = () => {
+    cloudStorage.readFile("test.txt", CloudStorageScope.AppData).then((mystr) => {
+      console.log(mystr)
+    }, reason => console.log(reason))
+  }
 
   return (
     <View style={styles.container}>
@@ -61,22 +78,19 @@ const Login = () => {
         <Button
           title="Sign in with Google"
           disabled={!request}
-          onPress={() => {
-            promptAsync();
-          }}
+          onPress={() => promptAsync()}
         />
       ) : (
         <Button
           title="Write Hello World to test.txt"
           onPress={() => {
-            writeFileAsync();
+            writeFileAsync().then(() => printFileAsync())
           }}
         />
       )}
     </View>
   );
 };
-
 
 function SyncStatus() {
   return (

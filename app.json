@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "myapp",
+    "scheme": "com.empower2families.e2f",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -36,7 +36,13 @@
     },
     "plugins": [
       "expo-router",
-      "react-native-cloud-storage"
+      "react-native-cloud-storage",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
+        }
+      ]
     ],
     "extra": {
       "eas": {
