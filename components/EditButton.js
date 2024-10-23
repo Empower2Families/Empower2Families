@@ -1,14 +1,14 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Pressable, View} from 'react-native';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import {COLORS} from '../constants/Colors';
 
 export default function EditButton({onPress}) {
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} onPress={onPress}>
+            <Pressable style={styles.button} onPress={onPress}>
                 <MaterialCommunityIcons name="pencil" size={30} color="#fff"/>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     );
 };

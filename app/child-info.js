@@ -4,8 +4,6 @@ import {
     Text,
     View,
     ScrollView,
-    TouchableOpacity,
-    ActivityIndicator,
     Modal,
     TextInput,
     Image, Pressable
@@ -18,48 +16,35 @@ import {COLORS} from '../constants/Colors';
 import {useSQLiteContext} from "expo-sqlite";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import EditButton from '../components/EditButton'
-import {Asset, useAssets} from 'expo-asset'
 
 export default function ChildInfo() {
     // Get DB from current context
     const db = useSQLiteContext()
 
-//    const [assets, error] = useAssets([require('assets/images/IMG_20241007_153417.jpg')]);
-
-    // TODO populate from DB
-    let hasChildInfo = true
-    let [name, setName] = useState("")
-    let [bio, setBio] = useState("")
-    let [birthday, setBirthday] = useState("")
-    let [selectedImage, selectImage] = useState("");
+    // UI variables
+    let [hasChildInfo, setHasChildInfo] = useState(false)
     let [isModalVisible, setModalVisible] = useState(false)
 
-    useEffect(function () {
-        async function effect() {
-            const firstRow = await db.getFirstAsync("SELECT * FROM childInfo")
-            return firstRow
-        }
+    // DB variables
+    let [name, setName] = useState("")
+    let [bio, setBio] = useState("")
+    let [birthday, setBirthday] = useState(0)
+    let [selectedImage, setImage] = useState("");
 
-        effect().then(r => {
-            setName(r.name)
-            setBio(r.bio)
-            setBirthday(r.bday)
+    // TODO Update to allow for multiple children to be tracked, this currently assumes we only have one child
+    useEffect(() => {
+        db.getFirstAsync("SELECT * FROM childInfo").then(r => {
+            setName(r?.name)
         })
     }, [db])
 
-    // Get child info shallow, don't follow any links
-
-    // Whenever the db source changes, update the child's image
-
     // Launch image picker for selecting child image
-
     // Helper function to write to persitent db
 
-    let pickImage = () => {
+    function pickImage() {
     }
-    let handleAddChildInfo = () => {
-    }
-    let handleSubmitChildInfo = () => {
+
+    function handleSubmitChildInfo() {
     }
 
     return (
@@ -72,7 +57,7 @@ export default function ChildInfo() {
                             {/* Child image/image upload */}
                             <Pressable style={styles.circle} onPress={pickImage}>
                                 {selectedImage ? (
-                                    <Image source={assets[0]} style={styles.circleImage} resizeMode="cover"/>
+                                    {/*<Image source={assets[0]} style={styles.circleImage} resizeMode="cover"/>*/}
                                 ) : (
                                     <Text style={styles.circleText}>Upload Image</Text>
                                 )}
@@ -98,7 +83,7 @@ export default function ChildInfo() {
                         <View style={styles.emptyMessageContainer}>
                             <Text style={styles.noChildInfoText}>
                                 You haven’t added your child’s info,{' '}
-                                <Pressable onPress={handleAddChildInfo} style={styles.noChildInfoContainer}>
+                                <Pressable onPress={() => setModalVisible(true)} style={styles.noChildInfoContainer}>
                                     <Text style={styles.addInfo}>click here to add.</Text>
                                 </Pressable>
                             </Text>
@@ -107,6 +92,8 @@ export default function ChildInfo() {
                 </View>
             </ScrollView>
             <EditButton onPress={() => setModalVisible(!isModalVisible)}/>
+
+            {/* Modal only displayed with editing child info */}
             <Modal visible={isModalVisible} transparent animationType="fade">
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>

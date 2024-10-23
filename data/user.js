@@ -3,6 +3,7 @@ export async function migrateDbIfNeeded(db) {
     const DATABASE_VERSION = 1;
 
     let currentDbVersion = 0
+    // TODO don't always migrate in final build
 //    let {user_version: currentDbVersion} = await db.getFirstAsync('PRAGMA user_version');
 //    if (currentDbVersion >= DATABASE_VERSION) {
 //        // Database is more up-to-date then application, no good way to handle this
@@ -18,8 +19,7 @@ export async function migrateDbIfNeeded(db) {
     })
 
     // Update DB version
-    await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`
-    );
+    await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
 
 const migrations = [
@@ -37,13 +37,18 @@ const migrations = [
                 bio TEXT
             );
         `)
-        db.runAsync('INSERT INTO childInfo (name, bday, bio) VALUES (?, ?, ?)', 'Test Name', 'May/22/2004', "This is an example bio")
-        //        await db.runAsync('INSERT INTO todos (value, intValue) VALUES (?, ?)', 'hello', 1);
         //        await db.runAsync('INSERT INTO todos (value, intValue) VALUES (?, ?)', 'world', 2);
     },
     // Additional migrations should be added here
 ]
 
-function addChild() {
-    
+/**
+ * TODO this method currently does no sanatization, it's probably fine since it's local but it should.
+ * @param {string} name Value for "name" field
+ * @param {number} bday Value for "birthday" field (Unix Timestamp)
+ * @param {string} bio Value for "bio" field
+ * @param {string} image TODO
+ */
+async function addChildInfo(db, name, bday, bio, image) {
+    return db.execAsync('INSERT INTO childInfo (name, image, bday, bio) VALUES (?, ?, ?, ?)', name, image, bday, bio)
 }

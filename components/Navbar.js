@@ -1,5 +1,5 @@
 import React from "react"
-import {Pressable, StyleSheet, Text, View} from "react-native"
+import {Pressable, StyleSheet, Text, View, Image} from "react-native"
 import {Link, router} from "expo-router"
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 
@@ -11,7 +11,7 @@ import {COLORS} from "../constants/Colors"
 export default function Navbar() {
   return (
     <View style={navStyles.navbarContainer}>
-      <Text style={navStyles.logo}>E2F</Text>
+      <Image source={require("assets/images/m2f-logo.png")} style={{width: 80, height: 36}}/>
       {!router.canGoBack() ? (
         <Text style={navStyles.logo}>{getGreeting()}</Text>
       ) : (
@@ -46,6 +46,7 @@ const navStyles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingBottom: 20,
     paddingTop: 60,
+    margin: 10,
     backgroundColor: COLORS.lightModeBG
   },
   logo: {

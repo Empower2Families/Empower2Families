@@ -4,11 +4,11 @@
     "slug": "Empower2Families",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/m2f-logo.png",
     "userInterfaceStyle": "automatic",
     "scheme": "com.empower2families.e2f",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/m2f-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -24,7 +24,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/m2f-logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.empower2families.e2f"
@@ -32,17 +32,11 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/m2f-logo.png"
     },
     "plugins": [
       "expo-router",
-      "react-native-cloud-storage",
-      [
-        "expo-asset",
-        {
-          "assets": ["assets/images/IMG_20241007_153417"]
-        }
-      ]
+      "react-native-cloud-storage"
     ],
     "extra": {
       "eas": {
