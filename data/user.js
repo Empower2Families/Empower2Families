@@ -33,7 +33,7 @@ const migrations = [
             CREATE TABLE IF NOT EXISTS childInfo (
                 name TEXT PRIMARY KEY NOT NULL,
                 image BLOB,
-                bday INTEGER,
+                bday TEXT,
                 bio TEXT
             );
         `)
@@ -43,12 +43,19 @@ const migrations = [
 ]
 
 /**
+ * Either insert new item or update existing data
  * TODO this method currently does no sanatization, it's probably fine since it's local but it should.
  * @param {string} name Value for "name" field
- * @param {number} bday Value for "birthday" field (Unix Timestamp)
+ * @param {string} bday Value for "birthday" field
  * @param {string} bio Value for "bio" field
  * @param {string} image TODO
  */
-async function addChildInfo(db, name, bday, bio, image) {
-    return db.execAsync('INSERT INTO childInfo (name, image, bday, bio) VALUES (?, ?, ?, ?)', name, image, bday, bio)
+export async function updateChildInfo(db, name, bday, bio, image) {
+    const result = await db.getFirstAsync("SELECT * FROM childInfo WHERE name = ?", name)
+
+    if (result === null) {
+        return db.runAsync('INSERT INTO childInfo (name, image, bday, bio) VALUES (?, ?, ?, ?)', name, image, bday, bio)
+    } else {
+//        return db.runAsync('', name, image, bday, bio)
+    }
 }

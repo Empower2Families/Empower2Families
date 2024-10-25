@@ -11,7 +11,7 @@ import {COLORS} from "../constants/Colors"
 export default function Navbar() {
   return (
     <View style={navStyles.navbarContainer}>
-      <Image source={require("assets/images/m2f-logo.png")} style={{width: 80, height: 36}}/>
+      <Image source={require("assets/images/m2f-logo.png")} style={navStyles.image}/>
       {!router.canGoBack() ? (
         <Text style={navStyles.logo}>{getGreeting()}</Text>
       ) : (
@@ -53,5 +53,9 @@ const navStyles = StyleSheet.create({
     fontSize: 24,
     fontStyle: 'italic',
     fontWeight: 'bold'
+  },
+  image: {
+    width: 100,
+    height: 55
   }
 });

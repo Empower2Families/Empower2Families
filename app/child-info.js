@@ -16,6 +16,7 @@ import {COLORS} from '../constants/Colors';
 import {useSQLiteContext} from "expo-sqlite";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import EditButton from '../components/EditButton'
+import * as User from '../data/user'
 
 export default function ChildInfo() {
     // Get DB from current context
@@ -28,7 +29,7 @@ export default function ChildInfo() {
     // DB variables
     let [name, setName] = useState("")
     let [bio, setBio] = useState("")
-    let [birthday, setBirthday] = useState(0)
+    let [birthday, setBirthday] = useState("")
     let [selectedImage, setImage] = useState("");
 
     // TODO Update to allow for multiple children to be tracked, this currently assumes we only have one child
@@ -45,6 +46,7 @@ export default function ChildInfo() {
     }
 
     function handleSubmitChildInfo() {
+        User.updateChildInfo(db, name, birthday, bio, selectedImage)
     }
 
     return (
