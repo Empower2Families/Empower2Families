@@ -3,7 +3,7 @@ on:
     push:
         branches:
             - master
-            - cleanup
+            - cleanup2
 
 jobs:
     build:
