@@ -11,7 +11,7 @@ import {COLORS} from "../constants/Colors"
 export default function Navbar() {
   return (
     <View style={navStyles.navbarContainer}>
-      <Image source={require("assets/images/m2f-logo.png")} style={navStyles.image}/>
+      <Image source={require("assets/images/adaptive-icon.png")} style={navStyles.image}/>
       {!router.canGoBack() ? (
         <Text style={navStyles.logo}>{getGreeting()}</Text>
       ) : (
