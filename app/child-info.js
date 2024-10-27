@@ -16,7 +16,7 @@ import {COLORS} from '../constants/Colors';
 import {useSQLiteContext} from "expo-sqlite";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import EditButton from '../components/EditButton'
-import * as User from '../data/user'
+import * as User from '../data/User'
 
 export default function ChildInfo() {
     // Get DB from current context
