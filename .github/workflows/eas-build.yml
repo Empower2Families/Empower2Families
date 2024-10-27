@@ -1,4 +1,4 @@
-name: Expo build
+name: EAS Build
 on:
     push:
         branches:
@@ -7,6 +7,7 @@ on:
 
 jobs:
     build:
+        name: Build
         runs-on: ubuntu-latest
         steps:
             - name: 🏗 Setup repo
@@ -16,6 +17,7 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 18.x
+                  cache: npm
 
             - name: 🏗 Setup EAS
               uses: expo/expo-github-action@v8
@@ -26,5 +28,5 @@ jobs:
             - name: 📦 Install dependencies
               run: npm ci
 
-            - name: 🚀 Create Build 
-              run: eas build --profile preview --platform all --non-interactive
+            - name: 🚀 Create Build
+              run: eas build --profile preview --platform android --non-interactive --no-wait
