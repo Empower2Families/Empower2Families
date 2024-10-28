@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useMemo} from 'react'
+import {Pressable, View, Text, StyleSheet} from "react-native";
 import {CloudStorage, CloudStorageProvider} from "react-native-cloud-storage";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from 'expo-web-browser';
-import {Pressable, View, Text, StyleSheet} from "react-native";
 import {Image} from "expo-image"
 
 WebBrowser.maybeCompleteAuthSession();
@@ -17,7 +17,7 @@ export default function SignInButton() {
     // Watch for authentication from user
     // TODO this module is techincally deprecated but so is the new module, the only one that's not deprecated requires sponsoring a project
     const [request, response, promptAsync] = Google.useAuthRequest({
-        androidClientId: '',
+        androidClientId: '564784265214-7859bl1sub0ephq2qis1uou5i47fagr8.apps.googleusercontent.com',
         scopes: [
             // For storing app data in Google Drive
             'https://www.googleapis.com/auth/drive.appdata',

@@ -45,10 +45,11 @@
     "react-navigation-stack": "^2.10.4"
   },
   "devDependencies": {
-    "eas-cli": "^12.6.1",
     "@babel/core": "^7.20.0",
+    "eas-cli": "^12.6.1",
     "eslint": "^8.57.0",
-    "eslint-config-expo": "^7.1.2"
+    "eslint-config-expo": "^7.1.2",
+    "eslint-import-resolver-alias": "^1.1.2"
   },
   "private": true
 }

@@ -4,9 +4,9 @@ module.exports = {
   settings: {
     "import/resolver": {
       alias: {
-        map: [["@", "./"]],
         extensions: [".js", ".jsx", ".ts", ".tsx"],
-        moduleDirectory: ["node_modules"]
+        moduleDirectory: ["node_modules"],
+        map: [ ["@", "."] ],
       }
     }
   }
