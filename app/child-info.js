@@ -1,22 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    Modal,
-    TextInput,
-    Image, Pressable
-} from 'react-native';
-//import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-//import AsyncStorage from '@react-native-async-storage/async-storage';
-//import * as ImagePicker from 'expo-image-picker';
-
-import {COLORS} from '../constants/Colors';
+import {StyleSheet, Text, View, ScrollView, Modal, TextInput, Pressable} from 'react-native';
 import {useSQLiteContext} from "expo-sqlite";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
-import EditButton from '../components/EditButton'
-import * as User from '../data/User'
+
+import {COLORS} from '@/constants/Colors';
+import EditButton from '@/components/EditButton'
+import * as User from '@/data/User'
 
 export default function ChildInfo() {
     // Get DB from current context
@@ -46,7 +35,8 @@ export default function ChildInfo() {
     }
 
     function handleSubmitChildInfo() {
-        User.updateChildInfo(db, name, birthday, bio, selectedImage)
+        User.updateChildInfo(db, name, birthday, bio, selectedImage).then(()=>{}, r => console.log(r))
+        setModalVisible(!isModalVisible)
     }
 
     return (

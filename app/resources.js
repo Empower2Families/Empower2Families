@@ -1,6 +1,6 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // Importing MaterialCommunityIcons icon library
 import React, { useState } from 'react';
 import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; // Importing MaterialCommunityIcons icon library
 import ResourceLink from '../components/ResourceLink';
 import { COLORS } from '../constants/Colors';
 

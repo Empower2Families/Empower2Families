@@ -51,11 +51,13 @@ const migrations = [
  * @param {string} image TODO
  */
 export async function updateChildInfo(db, name, bday, bio, image) {
-    const result = await db.getFirstAsync("SELECT * FROM childInfo WHERE name = ?", name)
+//    const result = await db.getFirstAsync("SELECT * FROM childInfo WHERE name = ?", name)
 
-    if (result === null) {
-        return db.runAsync('INSERT INTO childInfo (name, image, bday, bio) VALUES (?, ?, ?, ?)', name, image, bday, bio)
-    } else {
-//        return db.runAsync('', name, image, bday, bio)
-    }
+    console.log("what")
+    return db.runAsync('INSERT INTO childInfo (name, bday, bio) VALUES (?, ?, ?, ?);', name,  bday, bio)
+//    if (result === null) {
+//        return db.runAsync('INSERT INTO childInfo (name, image, bday, bio) VALUES (?, ?, ?, ?)', name, image, bday, bio)
+//    } else {
+////        return db.runAsync('', name, image, bday, bio)
+//    }
 }
