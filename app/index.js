@@ -8,6 +8,9 @@ import WideNavButton from '@/components/WideNavButton'
 import SmallNavButton from "@/components/SmallNavButton";
 import ButtonGrid from "@/components/ButtonGrid"
 import RecentAchievements from "@/components/RecentAchievements";
+import {SplashScreen} from "expo-router";
+
+SplashScreen.hideAsync();
 
 export default function Home() {
   const db = useSQLiteContext()
