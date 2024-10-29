@@ -1,6 +1,5 @@
 import {Stack} from 'expo-router'
 import {SQLiteProvider} from "expo-sqlite";
-import 'react-native-reanimated'
 
 import Navbar from '@/components/Navbar';
 import * as UserData from "@/data/User";
