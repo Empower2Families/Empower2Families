@@ -1,7 +1,8 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
-import {COLORS} from '../constants/Colors';
 import {Link} from 'expo-router';
+
+import {COLORS} from '@/constants/Colors';
 
 export default function WideNavButton({text, navTo}) {
   return (

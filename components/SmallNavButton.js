@@ -1,7 +1,7 @@
 import {Pressable, Text, StyleSheet, Dimensions} from "react-native"
 import {Link} from "expo-router";
 
-import {COLORS} from '../constants/Colors'
+import {COLORS} from '@/constants/Colors'
 
 export default function SmallNavButton({text, navTo}) {
     const containerWidth = Dimensions.get('window').width;

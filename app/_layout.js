@@ -6,7 +6,6 @@ import * as UserData from "@/data/User";
 
 // Structure component, content placed here will exist on all pages
 export default function RootLayout() {
-
   // TODO add database loading screen with react suspense
   return (
     <SQLiteProvider databaseName="user.db" onInit={UserData.migrateDbIfNeeded}>

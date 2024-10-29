@@ -1,7 +1,8 @@
 import React from 'react';
 import {StyleSheet, Pressable, View} from 'react-native';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
-import {COLORS} from '../constants/Colors';
+
+import {COLORS} from '@/constants/Colors';
 
 export default function EditButton({onPress}) {
     return (

@@ -3,7 +3,7 @@ import {Pressable, StyleSheet, Text, View, Image} from "react-native"
 import {Link, router} from "expo-router"
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 
-import {COLORS} from "../constants/Colors"
+import {COLORS} from "@/constants/Colors"
 
 // Component that contains the 'E2F' logo and home button
 // TODO style text component separate from logo

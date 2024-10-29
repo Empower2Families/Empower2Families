@@ -1,8 +1,9 @@
 import React from 'react';
-import { Linking, StyleSheet, Text, View } from 'react-native';
-import { COLORS } from '../constants/Colors';
+import {Linking, StyleSheet, Text, View} from 'react-native';
 
-const ResourceLink = ({ name, description, website, phone, onPress }) => {
+import {COLORS} from '@/constants/Colors';
+
+const ResourceLink = ({name, description, website, phone, onPress}) => {
 
   const handleWebsitePress = () => {
     Linking.openURL("https://" + website);
