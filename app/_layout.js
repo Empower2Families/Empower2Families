@@ -2,8 +2,8 @@ import {Stack} from 'expo-router'
 import {SQLiteProvider} from "expo-sqlite";
 import 'react-native-reanimated'
 
-import Navbar from '../components/Navbar';
-import * as UserData from "../data/User";
+import Navbar from '@/components/Navbar';
+import * as UserData from "@/data/User";
 
 // Structure component, content placed here will exist on all pages
 export default function RootLayout() {
