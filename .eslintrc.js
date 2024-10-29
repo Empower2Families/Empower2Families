@@ -6,7 +6,12 @@ module.exports = {
       alias: {
         extensions: [".js", ".jsx", ".ts", ".tsx"],
         moduleDirectory: ["node_modules"],
-        map: [ ["@", "."] ],
+        map: [["@", "."]],
+      },
+      node: {
+        paths: ["./"],
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+        moduleDirectory: ["node_modules"],
       }
     }
   }

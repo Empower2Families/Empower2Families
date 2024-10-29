@@ -17,6 +17,7 @@ export default function SignInButton() {
     // Watch for authentication from user
     // TODO this module is techincally deprecated but so is the new module, the only one that's not deprecated requires sponsoring a project
     const [request, response, promptAsync] = Google.useAuthRequest({
+        // According to online resource this is client id isn't meant to be kept "secret"
         androidClientId: '564784265214-7859bl1sub0ephq2qis1uou5i47fagr8.apps.googleusercontent.com',
         scopes: [
             // For storing app data in Google Drive
