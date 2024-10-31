@@ -11,8 +11,8 @@ import RecentAchievements from "@/components/RecentAchievements";
 
 
 export default function Home() {
-  const db = useSQLiteContext()
-  useDrizzleStudio(db)
+//  const db = useSQLiteContext()
+//  useDrizzleStudio(db)
 
   return (
     <ScrollView style={styles.scrollContainer}>
