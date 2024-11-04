@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, Modal, TextInput, Pressable} from 'react-native';
+import {StyleSheet, Text, View, Image, ScrollView, Modal, TextInput, Pressable} from 'react-native';
 import {useSQLiteContext} from "expo-sqlite";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
-
 import {COLORS} from '@/constants/Colors';
 import EditButton from '@/components/EditButton'
 import * as User from '@/data/User'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from "expo-image-picker";
 
 export default function ChildInfo() {
     // Get DB from current context
@@ -15,29 +16,81 @@ export default function ChildInfo() {
     let [hasChildInfo, setHasChildInfo] = useState(false)
     let [isModalVisible, setModalVisible] = useState(false)
 
+    // Text input variables
+    let [tempName, setTempName] = useState("")
+    let [tempBio, setTempBio] = useState("")
+    let [tempBirthday, setTempBirthday] = useState("")
+
     // DB variables
     let [name, setName] = useState("")
     let [bio, setBio] = useState("")
     let [birthday, setBirthday] = useState("")
-    let [selectedImage, setImage] = useState("");
+    let [selectedImage, setSelectedImage] = useState("");
 
     // TODO Update to allow for multiple children to be tracked, this currently assumes we only have one child
-    useEffect(() => {
+    function syncDisplayChildInfo() {
         db.getFirstAsync("SELECT * FROM childInfo").then(r => {
-            setName(r?.name)
+                setName(r?.name)
+                setBio(r?.bio)
+                setBirthday(r?.bday)
+            },
+            r => console.log(r))
+    }
+
+    async function pickImage() {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
         })
-    }, [db])
 
-    // Launch image picker for selecting child image
-    // Helper function to write to persitent db
-
-    function pickImage() {
+        if (!result.canceled) {
+            setSelectedImage(result.assets[0].uri)
+            // Store the URI in AsyncStorage
+            try {
+                await AsyncStorage.setItem('selectedImageURI', result.assets[0].uri);
+                console.log('Image URI stored successfully');
+            } catch (error) {
+                console.error('Error storing image URI:', error);
+            }
+        }
     }
 
     function handleSubmitChildInfo() {
-        User.updateChildInfo(db, name, birthday, bio, selectedImage).then(()=>{}, r => console.log(r))
-        setModalVisible(!isModalVisible)
+        User.updateChildInfo(db, name, tempName, tempBirthday, tempBio).then(
+            () => syncDisplayChildInfo(),
+            r => console.log(r))
+        setModalVisible(false)
     }
+
+    useEffect(() => {
+        const fetchStoredImageURI = async () => {
+            try {
+                const storedImageURI = await AsyncStorage.getItem('selectedImageURI');
+                if (storedImageURI !== null) {
+                    setSelectedImage(storedImageURI);
+                }
+            } catch (error) {
+                console.error('Error retrieving image URI from AsyncStorage:', error);
+            }
+        };
+
+        fetchStoredImageURI();
+
+        syncDisplayChildInfo()
+    }, [db])
+
+    useEffect(() => {
+        setHasChildInfo(name !== "" && name !== undefined)
+    }, [name])
+
+    useEffect(() => {
+        setTempName(name)
+        setTempBio(bio)
+        setTempBirthday(birthday)
+    }, [isModalVisible])
 
     return (
         <View style={{flex: 1, backgroundColor: "white"}}>
@@ -49,7 +102,7 @@ export default function ChildInfo() {
                             {/* Child image/image upload */}
                             <Pressable style={styles.circle} onPress={pickImage}>
                                 {selectedImage ? (
-                                    {/*<Image source={assets[0]} style={styles.circleImage} resizeMode="cover"/>*/}
+                                    <Image source={{uri: selectedImage}} style={styles.circleImage} resizeMode="cover"/>
                                 ) : (
                                     <Text style={styles.circleText}>Upload Image</Text>
                                 )}
@@ -96,20 +149,20 @@ export default function ChildInfo() {
                         <TextInput
                             style={styles.modalInput}
                             placeholder="Name"
-                            value={name}
-                            onChangeText={(text) => setName(text)}
+                            value={tempName}
+                            onChangeText={(text) => setTempName(text)}
                         />
                         <TextInput
                             style={styles.modalInput}
                             placeholder="Birthday"
-                            value={birthday}
-                            onChangeText={(text) => setBirthday(text)}
+                            value={tempBirthday}
+                            onChangeText={(text) => setTempBirthday(text)}
                         />
                         <TextInput
                             style={styles.modalInput}
                             placeholder="Bio"
-                            value={bio}
-                            onChangeText={(text) => setBio(text)}
+                            value={tempBio}
+                            onChangeText={(text) => setTempBio(text)}
                         />
                         <Pressable style={styles.button} onPress={handleSubmitChildInfo}>
                             <Text style={styles.buttonText}>Submit</Text>

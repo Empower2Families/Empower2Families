@@ -8,7 +8,6 @@ import {Image} from "expo-image"
 
 WebBrowser.maybeCompleteAuthSession();
 
-
 export default function SignInButton() {
     const [username, setUsername] = useState("")
     const [accessToken, setAccessToken] = useState(null)
@@ -51,6 +50,7 @@ export default function SignInButton() {
         [accessToken]
     )
 
+    let dataSynced = true
     // TODO this should probably take you to a dedicated sign-in page so the user can choose ICloud/Google Drive
     return cloudStorage.getProvider() === CloudStorageProvider.GoogleDrive && !accessToken ? (
         <Pressable style={styles.rowContainer} disabled={!request} onPress={() => promptAsync()}>
@@ -61,15 +61,24 @@ export default function SignInButton() {
             </View>
         </Pressable>
     ) : (
-        <View style={styles.rowContainer}>
-            <Image source={profileImage}
-                   contentFit="cover"
-                   style={styles.profileImage}/>
-            <View style={{margin: 10}}>
-                <Text style={styles.userNameMainText}>{username}</Text>
-                <Text style={styles.userNameSmallText}>[[Sync status]]</Text>
+        <Pressable onPress={() => console.log("TODO navigate to account page")}>
+            <View style={styles.rowContainer}>
+                <Image source={profileImage}
+                       contentFit="cover"
+                       style={styles.profileImage}/>
+                <View style={{margin: 10}}>
+                    <Text style={styles.userNameMainText}>{username}</Text>
+                    {dataSynced ? (
+                        <Text style={styles.userNameSmallText}>Sync up-to-date</Text>
+                    ) : (
+                        <View style={styles.rowContainer}>
+                            <MaterialCommunityIcons name="information" color="red"/>
+                            <Text style={{...styles.userNameSmallText, color: "red"}}> Sync conflict!</Text>
+                        </View>
+                    )}
+                </View>
             </View>
-        </View>
+        </Pressable>
     )
 }
 

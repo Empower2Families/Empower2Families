@@ -36,7 +36,19 @@
     },
     "plugins": [
       "expo-router",
-      "react-native-cloud-storage"
+      "react-native-cloud-storage",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow $(PRODUCT_NAME) to access your contacts."
+        }
+      ]
     ],
     "extra": {
       "eas": {
