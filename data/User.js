@@ -1,32 +1,58 @@
 const migrations = [
+    // Initial creation of database
     (db) => {
-        // Initial creation of database
-        // TODO goals achievements supports stressors
         // TODO the selected image for the child isn't stored in the database for several unknown reasons
         //      for consistantcy this should be fixed.
         db.execAsync(`
             PRAGMA journal_mode = 'wal';
-            CREATE TABLE IF NOT EXISTS childInfo (
+            CREATE TABLE IF NOT EXISTS children (
                 name TEXT PRIMARY KEY NOT NULL,
                 bday TEXT,
                 bio TEXT
+            );
+            CREATE TABLE IF NOT EXISTS contacts (
+                name TEXT PRIMARY KEY NOT NULL,
+                phone TEXT,
+                level INTEGER
+            );
+            CREATE TABLE IF NOT EXISTS achievements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                text TEXT,
+                date INTEGER
+            );
+            CREATE TABLE IF NOT EXISTS stressors (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                text TEXT,
+                date INTEGER
+            );
+            CREATE TABLE IF NOT EXISTS supports (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                text TEXT,
+                date INTEGER
+            );
+            CREATE TABLE IF NOT EXISTS goals (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                text TEXT,
+                date INTEGER,
+                met INTEGER
             );
         `)
     },
     // Additional migrations should be added here
 ]
 
+/**
+ * Will run all database migrations from the "migrations" array
+ */
 export async function migrateDbIfNeeded(db) {
     // What verions of the db schema do we want
     const DATABASE_VERSION = 1;
 
-    let currentDbVersion = 0
-    // TODO don't always migrate in final build
-//    let {user_version: currentDbVersion} = await db.getFirstAsync('PRAGMA user_version');
-//    if (currentDbVersion >= DATABASE_VERSION) {
-//        // Database is more up-to-date then application, no good way to handle this
-//        return;
-//    }
+    let {user_version: currentDbVersion} = await db.getFirstAsync('PRAGMA user_version');
+    if (currentDbVersion >= DATABASE_VERSION) {
+        console.log("Database is up-to-date")
+        return;
+    }
 
     migrations.forEach((migrate, i) => {
         console.log(`Migrating DB ${i + 1}/${migrations.length}...`)
@@ -38,32 +64,18 @@ export async function migrateDbIfNeeded(db) {
 
     // Update DB version
     await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
-
-}
-
-/**
- * Override local database with cloud database
- */
-export async function syncLocalDB() {
-
-}
-
-/**
- * Override cloud database with local database
- */
-export async function syncCloudDB() {
-
 }
 
 /**
  * Either insert new item or update existing data
- * TODO this method currently does no sanatization, it's probably fine since it's local but it should.
+ * @todo this method currently does no sanatization, it's probably fine since it's local but it should.
+ * @param db
+ * @param {string} oldName Value to use for primary key when searching for existing data
  * @param {string} name Value for "name" field
  * @param {string} bday Value for "birthday" field
  * @param {string} bio Value for "bio" field
- * @param {string} image TODO
  */
-export async function updateChildInfo(db, oldName, name, bday, bio) {
+export async function addUpdateChildInfo(db, oldName, name, bday, bio) {
     if (name === null || name === "") {
         return null
     }
@@ -72,6 +84,8 @@ export async function updateChildInfo(db, oldName, name, bday, bio) {
     if (result === null) {
         return db.runAsync('INSERT INTO childInfo (name, bday, bio) VALUES (?, ?, ?);', name, bday, bio)
     } else {
+        // Updating the primary key like this is probably a bad idea but until support for multiple children is
+        // added it shouldn't cause any harm.
         return db.runAsync("UPDATE childInfo SET name = ?, bday = ?, bio = ? WHERE name = ?;", name, bday, bio, oldName)
     }
 }

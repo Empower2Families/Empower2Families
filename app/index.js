@@ -11,9 +11,6 @@ import RecentAchievements from "@/components/RecentAchievements";
 
 
 export default function Home() {
-//  const db = useSQLiteContext()
-//  useDrizzleStudio(db)
-
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
@@ -21,7 +18,7 @@ export default function Home() {
           <SignInButton/>
           <SmallNavButton text="Child Info" navTo="child-info"/>
         </View>
-        <WideNavButton text="My Network" navTo=""/>
+        <WideNavButton text="My Network" navTo="network"/>
         <ButtonGrid text="Reflections" buttonInfo={reflectionButtons}/>
         <RecentAchievements/>
         <WideNavButton text="Resources" navTo="resources"/>

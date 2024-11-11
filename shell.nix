@@ -34,7 +34,7 @@ let
   };
 in {
   default = pkgs.mkShell {
-    packages = with pkgs; [ yarn nodejs_20 temurin-bin-17 androidComposition.androidsdk nodePackages.typescript-language-server nil act ];
+    packages = with pkgs; [ yarn nodejs_20 temurin-bin-17 androidComposition.androidsdk nodePackages.typescript-language-server nil act eslint ];
     ANDROID_HOME = "${androidComposition.androidsdk}/libexec/android-sdk";
   };
 }

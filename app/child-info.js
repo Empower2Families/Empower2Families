@@ -59,7 +59,7 @@ export default function ChildInfo() {
     }
 
     function handleSubmitChildInfo() {
-        User.updateChildInfo(db, name, tempName, tempBirthday, tempBio).then(
+        User.addUpdateChildInfo(db, name, tempName, tempBirthday, tempBio).then(
             () => syncDisplayChildInfo(),
             r => console.log(r))
         setModalVisible(false)
