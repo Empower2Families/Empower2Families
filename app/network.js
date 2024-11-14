@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View, Modal, TouchableOpacity, TextInput, ActivityIndicator} from 'react-native';
-import * as Contacts from 'expo-contacts';
-import {Picker} from '@react-native-picker/picker';
-import * as Sms from 'expo-sms';
+import React, {useEffect, useState} from 'react'
+import {ScrollView, StyleSheet, Text, View, Modal, TouchableOpacity, TextInput, ActivityIndicator} from 'react-native'
+import * as Contacts from 'expo-contacts'
+import {Picker} from '@react-native-picker/picker'
+import * as Sms from 'expo-sms'
+import {useSQLiteContext} from 'expo-sqlite'
 
-import {COLORS} from '@/constants/Colors';
-import {MaterialCommunityIcons} from "@expo/vector-icons";
-//import Contact from '@/components/Contact';
+import {COLORS} from '@/constants/Colors'
+import {MaterialCommunityIcons} from "@expo/vector-icons"
 //import NewMessageButton from '@/components/NewMessageButton';
 
 // Function to format phone number as (###) ###-####
@@ -20,6 +20,8 @@ function formatPhoneNumber(phoneNumber) {
 }
 
 export default function Network() {
+    const db = useSQLiteContext();
+
     const [contacts, setContacts] = useState([])
     const [filteredContacts, setFilteredContacts] = useState([])
     const emptyMessage = "You don’t have any supports added yet, click the blue plus sign to add one!"
@@ -36,6 +38,15 @@ export default function Network() {
 //    const [messageToSend, setMessageToSend] = useState("");
     const [selectedContact, setSelectedContact] = useState(null);
 
+    const getNetwork = async () => {
+        const rows = db.getAllAsync("SELECT * FROM contacts")
+        setNetwork((await rows).map((row, index) => ({
+            id: index.toString(),
+            name: row?.name,
+            phone: row?.phone,
+            level: row?.level
+        })))
+    }
 
     const addContactToNetwork = async () => {
         if (user && selectedContact) {
@@ -94,7 +105,7 @@ export default function Network() {
             contact.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setFilteredContacts(filtered);
-//        getNetwork();
+        getNetwork();
     }, [searchQuery]);
 
     return (
@@ -134,84 +145,42 @@ export default function Network() {
 
             <NewMessageButton onPress={() => setMessageModalVisible(!isMessageModalVisible)}/>
 
-            {/*<Modal visible={isMessageModalVisible} transparent animationType="fade">*/
-            }
-            {/*    <View style={styles.messageModalContainer}>*/
-            }
-            {/*        */
-            }{/*{/* Modal content */
-        }
-            {/*        <View style={styles.messageModalContent}>*/
-            }
-            {/*            */
-            }{/*{/* Close button */
-        }
-            {/*            <TouchableOpacity style={styles.closeButton} onPress={toggleMessageModal}>*/
-            }
-            {/*                <MaterialCommunityIcons name="close" size={20} color="#000"/>*/
-            }
-            {/*            </TouchableOpacity>*/
-            }
-            {/*            */
-            }{/*{/* Title */
-        }
-            {/*            <Text style={styles.modalTitle}>Send Message</Text>*/
-            }
-            {/*            */
-            }{/*{/* Tier Picker */
-        }
-            {/*            <Picker*/
-            }
-            {/*                selectedValue={selectedTier}*/
-            }
-            {/*                style={styles.picker}*/
-            }
-            {/*                onValueChange={(itemValue, itemIndex) => setSelectedTier(itemValue)}*/
-            }
-            {/*            >*/
-            }
-            {/*                <Picker.Item label="Tier 1" value={1}/>*/
-            }
-            {/*                <Picker.Item label="Tier 2" value={2}/>*/
-            }
-            {/*                <Picker.Item label="Tier 3" value={3}/>*/
-            }
-            {/*                <Picker.Item label="Tier 4" value={4}/>*/
-            }
-            {/*                <Picker.Item label="Tier 5" value={5}/>*/
-            }
-            {/*            </Picker>*/
-            }
-            {/*            */
-            }{/*{/* Text Input */
-        }
-            {/*            <TextInput*/
-            }
-            {/*                style={styles.messageInput}*/
-            }
-            {/*                placeholder="Type your message here..."*/
-            }
-            {/*                multiline*/
-            }
-            {/*                onChangeText={text => setMessageToSend(text)}*/
-            }
-            {/*            />*/
-            }
-            {/*            */
-            }{/*{/* Send button */
-        }
-            {/*            <TouchableOpacity style={styles.button} onPress={sendMessage}>*/
-            }
-            {/*                <Text style={styles.buttonText}>Send</Text>*/
-            }
-            {/*            </TouchableOpacity>*/
-            }
-            {/*        </View>*/
-            }
-            {/*    </View>*/
-            }
-            {/*</Modal>*/
-            }
+            {/*<Modal visible={isMessageModalVisible} transparent animationType="fade">*/}
+            {/*    <View style={styles.messageModalContainer}>*/}
+            {/*{/* Modal content */}
+            {/*        <View style={styles.messageModalContent}>*/}
+            {/*{/* Close button */}
+            {/*            <TouchableOpacity style={styles.closeButton} onPress={toggleMessageModal}>*/}
+            {/*                <MaterialCommunityIcons name="close" size={20} color="#000"/>*/}
+            {/*            </TouchableOpacity>*/}
+            {/*{/* Title */}
+            {/*            <Text style={styles.modalTitle}>Send Message</Text>*/}
+            {/*{/* Tier Picker */}
+            {/*            <Picker*/}
+            {/*                selectedValue={selectedTier}*/}
+            {/*                style={styles.picker}*/}
+            {/*                onValueChange={(itemValue, itemIndex) => setSelectedTier(itemValue)}*/}
+            {/*            >*/}
+            {/*                <Picker.Item label="Tier 1" value={1}/>*/}
+            {/*                <Picker.Item label="Tier 2" value={2}/>*/}
+            {/*                <Picker.Item label="Tier 3" value={3}/>*/}
+            {/*                <Picker.Item label="Tier 4" value={4}/>*/}
+            {/*                <Picker.Item label="Tier 5" value={5}/>*/}
+            {/*            </Picker>*/}
+            {/*{/* Text Input */}
+            {/*            <TextInput*/}
+            {/*                style={styles.messageInput}*/}
+            {/*                placeholder="Type your message here..."*/}
+            {/*                multiline*/}
+            {/*                onChangeText={text => setMessageToSend(text)}*/}
+            {/*            />*/}
+            {/*{/* Send button */}
+            {/*            <TouchableOpacity style={styles.button} onPress={sendMessage}>*/}
+            {/*                <Text style={styles.buttonText}>Send</Text>*/}
+            {/*            </TouchableOpacity>*/}
+            {/*        </View>*/}
+            {/*    </View>*/}
+            {/*</Modal>*/}
 
             <AddButton onPress={() => setAddModalVisible(!isAddModalVisible)}/>
 
@@ -248,70 +217,38 @@ export default function Network() {
                 </View>
             </Modal>
 
-            {/*<Modal visible={addModal} transparent animationType="fade">*/
-            }
-            {/*    <View style={styles.addModalContainer}>*/
-            }
-            {/*        <View style={styles.addModalContent}>*/
-            }
-            {/*            <TouchableOpacity style={styles.closeButton} onPress={toggleAddModal}>*/
-            }
-            {/*                <MaterialCommunityIcons name="close" size={20} color="#000"/>*/
-            }
-            {/*            </TouchableOpacity>*/
-            }
-            {/*            <Text style={styles.modalTitle}>Add Contact</Text>*/
-            }
-            {/*            {selectedContact && (*/
-            }
-            {/*                <View style={styles.selectedContactInfo}>*/
-            }
-            {/*                    <Text>{selectedContact.name}</Text>*/
-            }
-            {/*                    <Text>{selectedContact.phoneNumbers && selectedContact.phoneNumbers.length > 0 ? formatPhoneNumber(selectedContact.phoneNumbers[0].number) : 'No Phone Number'}</Text>*/
-            }
-            {/*                </View>*/
-            }
-            {/*            )}*/
-            }
-            {/*            <Text style={styles.tierText}>Set Tier</Text>*/
-            }
-            {/*            <Picker*/
-            }
-            {/*                selectedValue={selectedTier}*/
-            }
-            {/*                style={styles.picker}*/
-            }
-            {/*                onValueChange={(itemValue, itemIndex) =>*/
-            }
-            {/*                    setSelectedTier(itemValue)*/
-            }
-            {/*                }>*/
-            }
-            {/*                <Picker.Item label="1" value={1}/>*/
-            }
-            {/*                <Picker.Item label="2" value={2}/>*/
-            }
-            {/*                <Picker.Item label="3" value={3}/>*/
-            }
-            {/*                <Picker.Item label="4" value={4}/>*/
-            }
-            {/*                <Picker.Item label="5" value={5}/>*/
-            }
-            {/*            </Picker>*/
-            }
-            {/*            <TouchableOpacity style={styles.button} onPress={addContactToNetwork}>*/
-            }
-            {/*                <Text style={styles.buttonText}>Add Contact</Text>*/
-            }
-            {/*            </TouchableOpacity>*/
-            }
-            {/*        </View>*/
-            }
-            {/*    </View>*/
-            }
-            {/*</Modal>*/
-            }
+            {/*<Modal visible={addModal} transparent animationType="fade">*/}
+            {/*    <View style={styles.addModalContainer}>*/}
+            {/*        <View style={styles.addModalContent}>*/}
+            {/*            <TouchableOpacity style={styles.closeButton} onPress={toggleAddModal}>*/}
+            {/*                <MaterialCommunityIcons name="close" size={20} color="#000"/>*/}
+            {/*            </TouchableOpacity>*/}
+            {/*            <Text style={styles.modalTitle}>Add Contact</Text>*/}
+            {/*            {selectedContact && (*/}
+            {/*                <View style={styles.selectedContactInfo}>*/}
+            {/*                    <Text>{selectedContact.name}</Text>*/}
+            {/*                    <Text>{selectedContact.phoneNumbers && selectedContact.phoneNumbers.length > 0 ? formatPhoneNumber(selectedContact.phoneNumbers[0].number) : 'No Phone Number'}</Text>*/}
+            {/*                </View>*/}
+            {/*            )}*/}
+            {/*            <Text style={styles.tierText}>Set Tier</Text>*/}
+            {/*            <Picker*/}
+            {/*                selectedValue={selectedTier}*/}
+            {/*                style={styles.picker}*/}
+            {/*                onValueChange={(itemValue, itemIndex) =>*/}
+            {/*                    setSelectedTier(itemValue)*/}
+            {/*                }>*/}
+            {/*                <Picker.Item label="1" value={1}/>*/}
+            {/*                <Picker.Item label="2" value={2}/>*/}
+            {/*                <Picker.Item label="3" value={3}/>*/}
+            {/*                <Picker.Item label="4" value={4}/>*/}
+            {/*                <Picker.Item label="5" value={5}/>*/}
+            {/*            </Picker>*/}
+            {/*            <TouchableOpacity style={styles.button} onPress={addContactToNetwork}>*/}
+            {/*                <Text style={styles.buttonText}>Add Contact</Text>*/}
+            {/*            </TouchableOpacity>*/}
+            {/*        </View>*/}
+            {/*    </View>*/}
+            {/*</Modal>*/}
 
         </View>
     )
