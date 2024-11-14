@@ -11,6 +11,10 @@ import RecentAchievements from "@/components/RecentAchievements";
 
 
 export default function Home() {
+  // Allow debugging of local database in debug mode
+  const db = useSQLiteContext()
+  useDrizzleStudio(db)
+
   return (
     <ScrollView style={styles.scrollContainer}>
       <View style={styles.container}>
@@ -20,6 +24,7 @@ export default function Home() {
         </View>
         <WideNavButton text="My Network" navTo="network"/>
         <ButtonGrid text="Reflections" buttonInfo={reflectionButtons}/>
+        {/* TODO */}
         <RecentAchievements/>
         <WideNavButton text="Resources" navTo="resources"/>
       </View>
@@ -30,19 +35,19 @@ export default function Home() {
 const reflectionButtons = [
   {
     text: "Goals",
-    nav: ""
+    nav: "goals"
   },
   {
     text: "Achievements",
-    nav: ""
+    nav: "achievements"
   },
   {
     text: "Stressors",
-    nav: ""
+    nav: "stressors"
   },
   {
     text: "Supports",
-    nav: ""
+    nav: "supports"
   }
 ]
 

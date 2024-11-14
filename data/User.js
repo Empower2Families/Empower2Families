@@ -1,3 +1,4 @@
+// Management for the user.db database
 const migrations = [
     // Initial creation of database
     (db) => {
@@ -66,9 +67,11 @@ export async function migrateDbIfNeeded(db) {
     await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
 
+// TODO sync operations
+
 /**
  * Either insert new item or update existing data
- * @todo this method currently does no sanatization, it's probably fine since it's local but it should.
+ * @todo this method currently does no sanatization, it's probably fine since it's local but it should. This function should also be moved to the child-info screen
  * @param db
  * @param {string} oldName Value to use for primary key when searching for existing data
  * @param {string} name Value for "name" field

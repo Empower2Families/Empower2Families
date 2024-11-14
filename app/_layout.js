@@ -16,6 +16,10 @@ export default function RootLayout() {
         <Stack.Screen name="index"/>
         <Stack.Screen name="child-info"/>
         {/*<Stack.Screen name="network"/>*/}
+        <Stack.Screen name="goals"/>
+        <Stack.Screen name="achievements"/>
+        <Stack.Screen name="stressors"/>
+        <Stack.Screen name="supports"/>
         <Stack.Screen name="resources"/>
       </Stack>
     </SQLiteProvider>
