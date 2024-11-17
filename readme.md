@@ -1,6 +1,6 @@
 # Empower2Families
 
-Empower2Families mobile application built using Expo Go, React Native, SQLite, and OAuth.
+Empower2Families mobile application built using Expo Go, React Native, SQLite.
 
 ## Getting Started
 
