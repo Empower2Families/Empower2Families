@@ -6,11 +6,12 @@ const migrations = [
         //      for consistantcy this should be fixed.
         db.execAsync(`
             PRAGMA journal_mode = 'wal';
-            CREATE TABLE IF NOT EXISTS children (
+            CREATE TABLE IF NOT EXISTS childInfo (
                 name TEXT PRIMARY KEY NOT NULL,
                 bday TEXT,
                 bio TEXT
             );
+            DROP TABLE IF EXISTS contacts;
             CREATE TABLE IF NOT EXISTS contacts (
                 name TEXT PRIMARY KEY NOT NULL,
                 phone TEXT,
@@ -49,11 +50,12 @@ export async function migrateDbIfNeeded(db) {
     // What verions of the db schema do we want
     const DATABASE_VERSION = 1;
 
-    let {user_version: currentDbVersion} = await db.getFirstAsync('PRAGMA user_version');
-    if (currentDbVersion >= DATABASE_VERSION) {
-        console.log("Database is up-to-date")
-        return;
-    }
+    let currentDbVersion = 0
+//    let {user_version: currentDbVersion} = await db.getFirstAsync('PRAGMA user_version');
+//    if (currentDbVersion >= DATABASE_VERSION) {
+//        console.log("Database is up-to-date")
+//        return;
+//    }
 
     migrations.forEach((migrate, i) => {
         console.log(`Migrating DB ${i + 1}/${migrations.length}...`)
@@ -79,7 +81,7 @@ export async function migrateDbIfNeeded(db) {
  * @param {string} bio Value for "bio" field
  */
 export async function addUpdateChildInfo(db, oldName, name, bday, bio) {
-    if (name === null || name === "") {
+    if (name === null || name === "" || oldName === null || oldName === "") {
         return null
     }
     const result = await db.getFirstAsync("SELECT * FROM childInfo WHERE name = ?;", oldName)
@@ -90,5 +92,16 @@ export async function addUpdateChildInfo(db, oldName, name, bday, bio) {
         // Updating the primary key like this is probably a bad idea but until support for multiple children is
         // added it shouldn't cause any harm.
         return db.runAsync("UPDATE childInfo SET name = ?, bday = ?, bio = ? WHERE name = ?;", name, bday, bio, oldName)
+    }
+}
+
+export async function addContact(db, name, phone, level) {
+    if (name === null || name === "") {
+        return null
+    }
+    const result = await db.getFirstAsync("SELECT * FROM contacts WHERE name = ?;", name)
+
+    if (result === null) {
+        return db.runAsync('INSERT INTO contacts (name, phone, level) VALUES (?, ?, ?);', name, phone, level)
     }
 }

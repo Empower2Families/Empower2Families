@@ -7,6 +7,7 @@ import {useSQLiteContext} from 'expo-sqlite'
 
 import {COLORS} from '@/constants/Colors'
 import {MaterialCommunityIcons} from "@expo/vector-icons"
+import {addContact} from "@/data/User";
 //import NewMessageButton from '@/components/NewMessageButton';
 
 // Function to format phone number as (###) ###-####
@@ -27,18 +28,17 @@ export default function Network() {
     const emptyMessage = "You don’t have any supports added yet, click the blue plus sign to add one!"
 
     const [isAddModalVisible, setAddModalVisible] = useState(false);
-    const [isSearchModalVisible, setSearchModalVisible] = useState(false);
+    const [isContactModalVisible, setContactModalVisible] = useState(false);
     const [isMessageModalVisible, setMessageModalVisible] = useState(false);
 
     const [searchQuery, setSearchQuery] = useState('');
 
     const [network, setNetwork] = useState([]);
     const [selectedTier, setSelectedTier] = useState(1);
-    const [errorMessage, setErrorMessage] = useState('');
 //    const [messageToSend, setMessageToSend] = useState("");
     const [selectedContact, setSelectedContact] = useState(null);
 
-    const getNetwork = async () => {
+    const syncNetwork = async () => {
         const rows = db.getAllAsync("SELECT * FROM contacts")
         setNetwork((await rows).map((row, index) => ({
             id: index.toString(),
@@ -49,33 +49,18 @@ export default function Network() {
     }
 
     const addContactToNetwork = async () => {
-        if (user && selectedContact) {
-            const networkRef = doc(db, 'network', user.uid);
-            const networkDoc = await getDoc(networkRef);
-            const networkData = networkDoc.data()?.network || [];
-
-            const newContact = {
-                name: selectedContact.name,
-                phone: selectedContact.phoneNumbers && selectedContact.phoneNumbers.length > 0 ? formatPhoneNumber(selectedContact.phoneNumbers[0].number) : 'No Phone Number',
-                level: selectedTier
-            };
-
-            try {
-                await setDoc(networkRef, {network: [...networkData, newContact]});
-                // Clear the selectedContact and selectedTier after adding to the network
-                setSelectedContact(null);
-                setSelectedTier(1);
-                setAddModalVisible(false);
-                getNetwork();
-            } catch (error) {
-                console.error('Error adding contact to network:', error);
-            }
-        }
+        let phone = selectedContact.phoneNumbers.length > 0 ? selectedContact.phoneNumbers[0].number : 'No Phone Number'
+        await addContact(db, selectedContact.name, phone, selectedTier)
+        setSelectedContact(null);
+        setSelectedTier(1);
+        setAddModalVisible(false);
+        await syncNetwork();
     };
 
 
+    // Obtain contact permission and format contacts
     useEffect(() => {
-        async function effect() {
+        (async () => {
             const {status} = await Contacts.requestPermissionsAsync();
             if (status === 'granted') {
                 const {data} = await Contacts.getContactsAsync({
@@ -94,9 +79,7 @@ export default function Network() {
                 setContacts(formattedContacts);
                 setFilteredContacts(formattedContacts);
             }
-        }
-
-        effect();
+        })()
     }, []);
 
     useEffect(() => {
@@ -105,7 +88,7 @@ export default function Network() {
             contact.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setFilteredContacts(filtered);
-        getNetwork();
+        syncNetwork();
     }, [searchQuery]);
 
     return (
@@ -182,16 +165,13 @@ export default function Network() {
             {/*    </View>*/}
             {/*</Modal>*/}
 
-            <AddButton onPress={() => setAddModalVisible(!isAddModalVisible)}/>
+            <AddButton onPress={() => setContactModalVisible(!isContactModalVisible)}/>
 
-            <Modal visible={isAddModalVisible} transparent animationType="fade">
+            <Modal visible={isContactModalVisible} transparent animationType="fade">
                 <View style={styles.modalContainer}>
-                    {errorMessage !== '' && (
-                        <Text style={styles.errorText}>{errorMessage}</Text>
-                    )}
                     <View style={styles.modalContent}>
                         <TouchableOpacity style={styles.closeButton}
-                                          onPress={() => setAddModalVisible(!isAddModalVisible)}>
+                                          onPress={() => setContactModalVisible(!isContactModalVisible)}>
                             <MaterialCommunityIcons name="close" size={20} color="#000"/>
                         </TouchableOpacity>
                         <Text style={styles.modalTitle}>Add Contact</Text>
@@ -217,38 +197,39 @@ export default function Network() {
                 </View>
             </Modal>
 
-            {/*<Modal visible={addModal} transparent animationType="fade">*/}
-            {/*    <View style={styles.addModalContainer}>*/}
-            {/*        <View style={styles.addModalContent}>*/}
-            {/*            <TouchableOpacity style={styles.closeButton} onPress={toggleAddModal}>*/}
-            {/*                <MaterialCommunityIcons name="close" size={20} color="#000"/>*/}
-            {/*            </TouchableOpacity>*/}
-            {/*            <Text style={styles.modalTitle}>Add Contact</Text>*/}
-            {/*            {selectedContact && (*/}
-            {/*                <View style={styles.selectedContactInfo}>*/}
-            {/*                    <Text>{selectedContact.name}</Text>*/}
-            {/*                    <Text>{selectedContact.phoneNumbers && selectedContact.phoneNumbers.length > 0 ? formatPhoneNumber(selectedContact.phoneNumbers[0].number) : 'No Phone Number'}</Text>*/}
-            {/*                </View>*/}
-            {/*            )}*/}
-            {/*            <Text style={styles.tierText}>Set Tier</Text>*/}
-            {/*            <Picker*/}
-            {/*                selectedValue={selectedTier}*/}
-            {/*                style={styles.picker}*/}
-            {/*                onValueChange={(itemValue, itemIndex) =>*/}
-            {/*                    setSelectedTier(itemValue)*/}
-            {/*                }>*/}
-            {/*                <Picker.Item label="1" value={1}/>*/}
-            {/*                <Picker.Item label="2" value={2}/>*/}
-            {/*                <Picker.Item label="3" value={3}/>*/}
-            {/*                <Picker.Item label="4" value={4}/>*/}
-            {/*                <Picker.Item label="5" value={5}/>*/}
-            {/*            </Picker>*/}
-            {/*            <TouchableOpacity style={styles.button} onPress={addContactToNetwork}>*/}
-            {/*                <Text style={styles.buttonText}>Add Contact</Text>*/}
-            {/*            </TouchableOpacity>*/}
-            {/*        </View>*/}
-            {/*    </View>*/}
-            {/*</Modal>*/}
+            <Modal visible={isAddModalVisible} transparent animationType="fade">
+                <View style={styles.addModalContainer}>
+                    <View style={styles.addModalContent}>
+                        <TouchableOpacity style={styles.closeButton}
+                                          onPress={() => setAddModalVisible(!isAddModalVisible)}>
+                            <MaterialCommunityIcons name="close" size={20} color="#000"/>
+                        </TouchableOpacity>
+                        <Text style={styles.modalTitle}>Add Contact</Text>
+                        {selectedContact && (
+                            <View style={styles.selectedContactInfo}>
+                                <Text>{selectedContact.name}</Text>
+                                <Text>{selectedContact.phoneNumbers && selectedContact.phoneNumbers.length > 0 ? formatPhoneNumber(selectedContact.phoneNumbers[0].number) : 'No Phone Number'}</Text>
+                            </View>
+                        )}
+                        <Text style={styles.tierText}>Set Tier</Text>
+                        <Picker
+                            selectedValue={selectedTier}
+                            style={styles.picker}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setSelectedTier(itemValue)
+                            }>
+                            <Picker.Item label="1" value={1}/>
+                            <Picker.Item label="2" value={2}/>
+                            <Picker.Item label="3" value={3}/>
+                            <Picker.Item label="4" value={4}/>
+                            <Picker.Item label="5" value={5}/>
+                        </Picker>
+                        <TouchableOpacity style={styles.button} onPress={addContactToNetwork}>
+                            <Text style={styles.buttonText}>Add Contact</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
 
         </View>
     )
