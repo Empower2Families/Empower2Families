@@ -4,6 +4,7 @@ In this page you'll find information about the purpose of this app, the technolo
 
 ## File Structure
 
+Note that this file structure isn't comprehensive and assumes you have a basic understanding of Node.js development.
 ```
 .
 |- app: This contains the code for the application page layouts and routing.
