@@ -88,7 +88,7 @@ export default function Goals() {
     try {
       if (editedGoalText !== undefined && editedGoalText.trim() !== '') {
         // Update the goal with the specified id
-        await db.runAsync("UPDATE goals SET text = ? WHERE id = ?", editedGoalText, editingGoalId)
+        await db.runAsync("UPDATE goals SET text = ? WHERE id = ?;", editedGoalText, editingGoalId)
 
         // Close the edit modal
         closeEditModal();
@@ -105,28 +105,13 @@ export default function Goals() {
 
   const setGoalToMet = async (id) => {
     try {
-      await db.getFirstAsync("SELECT * FROM goals WHERE id = ?", id).then(async r => {
+      await db.getFirstAsync("SELECT * FROM goals WHERE id = ?;", id).then(async r => {
         // Mark the goal as met
         if (!r.met) {
-          await db.runAsync("UPDATE goals SET met = 1 WHERE id = ?", id)
-          // TODO
-          // Create a new entry in the achievements collection using addGoal approach
-//        const achievementsRef = doc(db, 'achievements', user.uid);
-//        const achievementsDoc = await getDoc(achievementsRef);
-//        const currentAchievements = achievementsDoc.data()?.achievements || [];
-//
-//        const newAchievement = {
-//          name: currentGoals[id].name,
-//          accomplished: new Date().toISOString(),
-//        };
-//
-//        // Add the new achievement to the array
-//        currentAchievements.push(newAchievement);
-//
-//        // Update the document with the modified array
-//        await setDoc(achievementsRef, {
-//          achievements: currentAchievements,
-//        });
+          await db.runAsync("UPDATE goals SET met = 1 WHERE id = ?;", id)
+
+          // Create a new entry in the achievements collection
+          await db.runAsync("INSERT INTO achievements (text, date) VALUES (?, ?);", r.text, Date.now())
         }
         // Update the achievements
       }, reason => console.warn(reason))
