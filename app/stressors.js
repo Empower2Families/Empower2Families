@@ -2,19 +2,20 @@
 
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger} from 'react-native-popup-menu';
-import MaterialCommunityIcons from '@expo/vector-icons';
+import {MenuProvider} from 'react-native-popup-menu';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
 import AddButton from '@/components/AddButton';
+import ListItem from '@/components/ListItem';
 import {COLORS} from '@/constants/Colors';
 import {useSQLiteContext} from "expo-sqlite";
 
-export default function Supports() {
+export default function Stressors() {
     const db = useSQLiteContext();
     const [isModalVisible, setModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false); // New state for edit modal
-    const [stressorsText, setStressorText] = useState('');
+    const [stressorText, setStressorText] = useState('');
     const [editedStressorsText, setEditedStressorsText] = useState(''); // New state for edited support text
-    const [editingStressorsId, setEditingStressorsId] = useState(null); // New state for tracking the support being edited
+    const [editingStressorId, setEditingStressorsId] = useState(null); // New state for tracking the support being edited
     const [stressors, setStressors] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
@@ -28,73 +29,47 @@ export default function Supports() {
 
     const addStressor = async () => {
         try {
-            const userRef = doc(db, 'stressors', user.uid);
+            if (stressorText.length > 0) {
+                await db.runAsync('INSERT INTO stressors (text, date) VALUES (?, ?);', stressorText, Date.now())
+                toggleModal(); // Close the modal after adding
 
-            // Get the current supports array from the document
-            const userDoc = await getDoc(userRef);
-            const currentStressors = userDoc.data()?.stressors || [];
-
-            // Add the new support to the array
-            if (stressorsText.length > 0) {
-                currentStressors.push(stressorsText);
-                toggleModal(); // Close the modal after adding support
-                // Refresh the supports array
                 getStressors();
             } else {
-                setErrorMessage('Stressor left blank.');
+                setErrorMessage('Stressor left blank');
                 setTimeout(() => {
                     setErrorMessage('');
                 }, 5000);
             }
-            setStressorText('');
-
-
-            // Update the document with the modified array
-            await setDoc(userRef, {
-                stressors: currentStressors,
-            });
-
-
         } catch (error) {
-            console.log(error);
+            console.error(error);
+        } finally {
+            setStressorText('')
+            setIsLoading(false)
         }
-
-
     };
 
     const getStressors = async () => {
         setIsLoading(true);
-        if (user) {
-            const stressorsRef = doc(db, 'stressors', user.uid);
 
-            try {
-                const stressorsDoc = await getDoc(stressorsRef);
-                const stressorsData = stressorsDoc.data()?.stressors || [];
-
-                setStressors(stressorsData.map((stressor, index) => ({id: index.toString(), text: stressor})));
-            } catch (error) {
-                console.error('Error fetching supports document:', error);
-            } finally {
-                setIsLoading(false);
-            }
+        try {
+            db.getAllAsync("SELECT * FROM stressors;").then(r => {
+                setStressors(r.map((s, index) => ({
+                    id: s.id,
+                    text: s.text,
+                    // Assuming you want to display the accomplishment timestamp as well
+                    timestamp: s.date,
+                })));
+            })
+        } catch (error) {
+            console.error('Error fetching stressors document:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const deleteStressor = async (id) => {
         try {
-            const userRef = doc(db, 'stressors', user.uid);
-            const userDoc = await getDoc(userRef);
-            const currentStressors = userDoc.data()?.stressors || [];
-
-            // Remove the support with the specified id
-            const updatedStressors = currentStressors.filter((_, index) => index.toString() !== id);
-
-            // Update the document with the modified array
-            await setDoc(userRef, {
-                stressors: updatedStressors,
-            });
-
-            // Refresh the supports array
+            await db.runAsync("DELETE FROM stressors WHERE id = ?", id)
             getStressors();
         } catch (error) {
             console.log(error);
@@ -103,19 +78,9 @@ export default function Supports() {
 
     const editStressor = async (id) => {
         try {
-            const userRef = doc(db, 'stressors', user.uid);
-            const userDoc = await getDoc(userRef);
-            const currentStressors = userDoc.data()?.stressors || [];
-
-            const editedStressorsText = await openEditModal(id, currentStressors[id]);
-
-            if (editedStressorsText !== null) {
-                // Update the support with the specified id
-                currentStressors[id] = editedStressorsText;
-
-                // Refresh the supports array
-                getStressors();
-            }
+            db.getFirstAsync("SELECT * FROM stressors WHERE id = ?", id).then(async (r) => {
+                await openEditModal(id, r.text);
+            }, reason => console.warn(reason))
         } catch (error) {
             console.error(error);
         }
@@ -124,24 +89,14 @@ export default function Supports() {
     const saveEditedStressor = async () => {
         try {
             if (editedStressorsText !== undefined && editedStressorsText.trim() !== '') {
-                const userRef = doc(db, 'stressors', user.uid);
-                const userDoc = await getDoc(userRef);
-                const currentStressors = userDoc.data()?.stressors || [];
-
-                // Modify the specific element in the array
-                currentStressors[editingStressorsId] = editedStressorsText;
-                console.log(editedStressorsText);
-
-                // Update the document with the modified array
-                await setDoc(userRef, {
-                    stressors: currentStressors,
-                });
+                // Update the stressor with the specified id
+                await db.runAsync("UPDATE stressors SET text = ? WHERE id = ?;", editedStressorsText, editingStressorId)
 
                 // Close the edit modal
                 closeEditModal();
 
-                // Refresh the supports array
-                getStressors();
+                // Refresh the stressors array
+                getStressors()
             } else {
                 console.error('Invalid editedStressorsText:', editedStressorsText);
             }
@@ -233,67 +188,6 @@ export default function Supports() {
         </MenuProvider>
     );
 };
-
-function ListItem({text, id, onDelete, onEdit}) {
-    const openMenu = () => {
-        console.log('menu open');
-    }
-
-    return (
-        <View style={listItemStyles.container}>
-            <Text style={listItemStyles.buttonText}>{text}</Text>
-            <Menu>
-                <MenuTrigger><MaterialCommunityIcons name="dots-vertical" size={30} color="grey"/></MenuTrigger>
-                <MenuOptions style={listItemStyles.menu}>
-                    <MenuOption onSelect={() => onEdit(id)} text='Edit'/>
-                    <MenuOption onSelect={() => onDelete(id)}>
-                        <Text style={{color: 'red'}}>Delete</Text>
-                    </MenuOption>
-                </MenuOptions>
-            </Menu>
-        </View>
-    );
-}
-
-const listItemStyles = StyleSheet.create({
-    container: {
-        backgroundColor: 'white',
-        borderRadius: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 20,
-        marginVertical: 10,
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 2,
-            height: 4,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 10,
-    },
-    buttonText: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        width: '60%'
-    },
-    menu: {
-        position: 'absolute',
-        backgroundColor: 'white',
-        right: 0,
-        top: -150,
-        padding: 10,
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 2,
-            height: 4,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 10,
-    }
-});
 
 const styles = StyleSheet.create({
     overCon: {

@@ -58,7 +58,7 @@ export default function Achievements() {
                 }, 5000);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
         setNewAchievementText('')
     };

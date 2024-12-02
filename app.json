@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "E2F",
-    "slug": "Empower2Families",
+    "slug": "empower2families",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -52,7 +52,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "8c6e1d1a-5a4d-46e0-9ed3-62d129d32c93"
+        "projectId": "4fb9984e-a634-428c-8e0e-405bfc0bab5e"
       }
     }
   }

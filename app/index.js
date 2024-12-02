@@ -24,7 +24,6 @@ export default function Home() {
         </View>
         <WideNavButton text="My Network" navTo="network"/>
         <ButtonGrid text="Reflections" buttonInfo={reflectionButtons}/>
-        {/* TODO */}
         <RecentAchievements/>
         <WideNavButton text="Resources" navTo="resources"/>
       </View>

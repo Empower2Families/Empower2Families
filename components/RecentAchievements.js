@@ -27,7 +27,6 @@ const RecentAchievements = () => {
     const getAchievements = async () => {
         setIsLoading(true);
         const achievementsData = await fetchAchievements();
-        console.log(achievementsData)
         const sortedAchievements = achievementsData.sort((a, b) => b.timestamp - a.timestamp);
         const recentAchievements = sortedAchievements.slice(-3).reverse();
         setAchievements(recentAchievements);
