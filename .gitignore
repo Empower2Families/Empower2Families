@@ -7,6 +7,8 @@ node_modules/
 .expo/
 dist/
 web-build/
+/ios
+/android
 
 # Native
 *.orig.*
@@ -29,6 +31,7 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
 
 # typescript

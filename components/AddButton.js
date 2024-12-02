@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { COLORS } from '../constants';
+import { COLORS } from '@/constants/Colors';
+import {MaterialCommunityIcons} from "@expo/vector-icons";
 
-const AddButton = ({ onPress }) => {
+export default function AddButton ({ onPress }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={onPress}>
@@ -34,5 +34,3 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8, // For iOS shadow
   },
 });
-
-export default AddButton;
