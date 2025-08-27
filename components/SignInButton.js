@@ -98,7 +98,8 @@ async function fetchUserInfo(token) {
 const styles = StyleSheet.create({
     rowContainer: {
         alignItems: "center",
-        flexDirection: "row"
+        flexDirection: "row",
+        width: 100
     },
     profileImage: {
         width: 40,

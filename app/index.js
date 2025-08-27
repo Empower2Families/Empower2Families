@@ -12,8 +12,8 @@ import RecentAchievements from "@/components/RecentAchievements";
 
 export default function Home() {
   // Allow debugging of local database in debug mode
-  const db = useSQLiteContext()
-  useDrizzleStudio(db)
+  //const db = useSQLiteContext()
+  //useDrizzleStudio(db)
 
   return (
     <ScrollView style={styles.scrollContainer}>
@@ -69,5 +69,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     width: 'auto',
   },
+
+  SignInButton: {
+    width: 10,
+  }
 })
 

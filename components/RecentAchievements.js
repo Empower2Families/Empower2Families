@@ -12,7 +12,7 @@ const RecentAchievements = () => {
     const fetchAchievements = async () => {
         let achievements = [];
         try {
-            const r = db.getAllSync("SELECT * FROM achievements;")
+            const r = db.getAllSync("SELECT * FROM achievements ORDER BY date DESC;")
             achievements = r.map((goals, index) => ({
                 id: goals.id,
                 text: goals.text,
@@ -27,7 +27,7 @@ const RecentAchievements = () => {
     const getAchievements = async () => {
         setIsLoading(true);
         const achievementsData = await fetchAchievements();
-        const sortedAchievements = achievementsData.sort((a, b) => b.timestamp - a.timestamp);
+        const sortedAchievements = achievementsData.sort((a, b) => a.timestamp - b.timestamp);
         const recentAchievements = sortedAchievements.slice(-3).reverse();
         setAchievements(recentAchievements);
         setIsLoading(false);

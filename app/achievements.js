@@ -27,7 +27,7 @@ export default function Achievements() {
         setIsLoading(true);
 
         try {
-            db.getAllAsync("SELECT * FROM achievements;").then(r => {
+            db.getAllAsync("SELECT * FROM achievements ORDER BY date DESC;").then(r => {
                 setAchievments(r.map((goals, index) => ({
                     id: goals.id,
                     text: goals.text,
@@ -58,7 +58,7 @@ export default function Achievements() {
                 }, 5000);
             }
         } catch (error) {
-            console.error(error);
+            console.error('Failure to add achievement', error);
         }
         setNewAchievementText('')
     };

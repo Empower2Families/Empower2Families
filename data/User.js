@@ -1,47 +1,70 @@
 // Management for the user.db database
 const migrations = [
-    // Initial creation of database
-    (db) => {
-        // TODO the selected image for the child isn't stored in the database for several unknown reasons
-        //      for consistantcy this should be fixed.
-        db.execAsync(`
-            PRAGMA journal_mode = 'wal';
-            CREATE TABLE IF NOT EXISTS childInfo (
-                name TEXT PRIMARY KEY NOT NULL,
-                bday TEXT,
-                bio TEXT
-            );
-            DROP TABLE IF EXISTS contacts;
-            CREATE TABLE IF NOT EXISTS contacts (
-                name TEXT PRIMARY KEY NOT NULL,
-                phone TEXT,
-                level INTEGER
-            );
-            CREATE TABLE IF NOT EXISTS achievements (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                text TEXT,
-                date INTEGER
-            );
-            CREATE TABLE IF NOT EXISTS stressors (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                text TEXT,
-                date INTEGER
-            );
-            CREATE TABLE IF NOT EXISTS supports (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                text TEXT,
-                date INTEGER
-            );
-            CREATE TABLE IF NOT EXISTS goals (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                text TEXT,
-                date INTEGER,
-                met INTEGER
-            );
-        `)
-    },
-    // Additional migrations should be added here
-]
+  // Initial creation of database
+  (db) => {
+    // PRAGMA to set journal mode to WAL (Write-Ahead Logging)
+    db.execAsync('PRAGMA journal_mode = WAL;')
+
+    // Create childInfo table
+    db.execAsync(`
+      CREATE TABLE IF NOT EXISTS childInfo (
+        name TEXT PRIMARY KEY NOT NULL,
+        bday TEXT,
+        bio TEXT
+      );
+    `);
+
+    // Create contacts table
+    db.execAsync(`
+      CREATE TABLE IF NOT EXISTS contacts (
+        name TEXT PRIMARY KEY NOT NULL,
+        phone TEXT,
+        level INTEGER
+      );
+    `);
+
+    // Create achievements table
+    db.execAsync(`
+      CREATE TABLE IF NOT EXISTS achievements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        text TEXT,
+        date INTEGER
+      );
+    `);
+
+    // Create stressors table
+    db.execAsync(`
+      CREATE TABLE IF NOT EXISTS stressors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        text TEXT,
+        date INTEGER
+      );
+    `);
+
+    // Create supports table
+    db.execAsync(`
+      CREATE TABLE IF NOT EXISTS supports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        text TEXT,
+        date INTEGER
+      );
+    `);
+
+    // Create goals table
+    db.execAsync(`
+      CREATE TABLE IF NOT EXISTS goals (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        text TEXT,
+        date INTEGER,
+        met INTEGER
+      );
+    `);
+  },
+
+  // Additional migrations can be added here
+];
+
+export default migrations;
 
 /**
  * Will run all database migrations from the "migrations" array
@@ -105,3 +128,19 @@ export async function addContact(db, name, phone, level) {
         return db.runAsync('INSERT INTO contacts (name, phone, level) VALUES (?, ?, ?);', name, phone, level)
     }
 }
+
+export async function delContact(db, name, phone, level) {
+    if (name === null || name === "") {
+        return null
+    }
+
+	console.log("Preparing result...")
+    const result = await db.getFirstAsync("DELETE FROM contacts WHERE phone = ?;", phone)
+    console.log("Successful result")
+    console.log("Result: " + result)
+
+    if (result === null) {
+        return db.runAsync('DELETE FROM contacts WHERE phone = ?;', phone)
+    }
+}
+

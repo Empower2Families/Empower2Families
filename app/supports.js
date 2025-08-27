@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 40,
         paddingBottom: 40,
-        paddingTop: 10,
+        paddingTop: 20,
     },
     title: {
         fontSize: 24,

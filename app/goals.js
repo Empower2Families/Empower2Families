@@ -107,12 +107,12 @@ export default function Goals() {
     try {
       await db.getFirstAsync("SELECT * FROM goals WHERE id = ?;", id).then(async r => {
         // Mark the goal as met
-        if (!r.met) {
+
           await db.runAsync("UPDATE goals SET met = 1 WHERE id = ?;", id)
 
           // Create a new entry in the achievements collection
           await db.runAsync("INSERT INTO achievements (text, date) VALUES (?, ?);", r.text, Date.now())
-        }
+
         // Update the achievements
       }, reason => console.warn(reason))
 
@@ -252,8 +252,8 @@ const listItemStyles = StyleSheet.create({
   menu: {
     position: 'absolute',
     backgroundColor: 'white',
-    right: 0,
-    top: -150,
+    right: -20,
+    top: -80,
     padding: 10,
     elevation: 5,
     shadowColor: "#000",

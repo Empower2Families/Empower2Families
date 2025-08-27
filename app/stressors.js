@@ -153,7 +153,7 @@ export default function Stressors() {
                             </TouchableOpacity>
 
                             <Text style={styles.modalTitle}>Add Stressor</Text>
-                            <Text style={styles.info}>A stressor can be ...!</Text>
+                            <Text style={styles.info}>A stressor can be anything that causes you strain or tension!</Text>
                             <TextInput
                                 style={styles.modalInput}
                                 placeholder="Enter your stressor here ..."

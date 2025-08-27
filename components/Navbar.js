@@ -10,18 +10,18 @@ import {COLORS} from "@/constants/Colors"
 // TODO add agreed logo style
 export default function Navbar() {
   return (
+  <Link href="/" asChild>
+  <Pressable>
     <View style={navStyles.navbarContainer}>
       <Image source={require("assets/images/logo.png")} style={navStyles.image}/>
       {!router.canGoBack() ? (
         <Text style={navStyles.logo}>{getGreeting()}</Text>
       ) : (
-        <Link href="/" asChild>
-          <Pressable>
             <MaterialCommunityIcons name="home" size={32} color="black"/>
-          </Pressable>
-        </Link>
       )}
     </View>
+    </Pressable>
+    </Link>
   )
 }
 
@@ -30,11 +30,11 @@ function getGreeting() {
   const currentHour = new Date().getHours();
 
   if (currentHour >= 5 && currentHour < 12) {
-    return 'Good Morning';
+    return 'Good morning!';
   } else if (currentHour >= 12 && currentHour < 18) {
-    return 'Good Afternoon';
+    return 'Good afternoon!';
   } else {
-    return 'Good Evening';
+    return 'Good evening!';
   }
 }
 
@@ -47,7 +47,7 @@ const navStyles = StyleSheet.create({
     paddingBottom: 20,
     paddingTop: 60,
     margin: 10,
-    backgroundColor: COLORS.lightModeBG
+    backgroundColor: COLORS.lightModeBG,
   },
   logo: {
     fontSize: 24,
@@ -56,6 +56,6 @@ const navStyles = StyleSheet.create({
   },
   image: {
     width: 100,
-    height: 55
+    height: 55,
   }
 });

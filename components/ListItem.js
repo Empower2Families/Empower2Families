@@ -46,8 +46,8 @@ const listItemStyles = StyleSheet.create({
     menu: {
         position: 'absolute',
         backgroundColor: 'white',
-        right: 0,
-        top: -150,
+        right: -20,
+        top: -80,
         padding: 10,
         elevation: 5,
         shadowColor: "#000",
